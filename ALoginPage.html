@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Multi-Role Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Replicating the FleetPass Admin Panel style */
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #10b981;
+            --secondary-dark: #059669;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+            --info-color: #3b82f6;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #0f172a;
+            --bs-body-color: #f1f5f9;
+            --bg-primary: #1e293b;
+            --bg-secondary: #0f172a;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #475569;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        /* Card Styling */
+        .card-custom {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xl);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            width: 350px;
+            padding: 30px;
+        }
+
+        /* Input and Select */
+        .form-control, .form-select {
+            border: 2px solid var(--border-color) !important;
+            background: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+            border-radius: var(--border-radius) !important;
+            transition: var(--transition) !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1) !important;
+        }
+        
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            color: white;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .demo-credentials {
+            border: 1px dashed var(--border-color);
+            padding: 10px;
+            border-radius: var(--border-radius);
+            margin-top: 20px;
+            background-color: var(--bg-secondary);
+            font-size: 0.9em;
+            text-align: left;
+        }
+        
+        .demo-buttons-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .btn-demo-user {
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+            border: none;
+            color: white;
+        }
+        .btn-demo-driver {
+            background: linear-gradient(135deg, var(--info-color), #2563eb);
+            border: none;
+            color: white;
+        }
+        .btn-demo-municipal {
+            background: linear-gradient(135deg, var(--warning-color), #d97706);
+            border: none;
+            color: white;
+        }
+        .btn-demo-user:hover, .btn-demo-driver:hover, .btn-demo-municipal:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body data-bs-theme="light">
+
+    <div class="card-custom text-center">
+        <select id="languageSelect" class="form-select form-select-sm w-auto d-inline-block">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+        </select>
+
+        <h2 id="title" class="my-3">Login</h2>
+
+        <form id="loginForm">
+            <div class="mb-3">
+                <select id="role" class="form-select" required>
+                    <option value="">{rolePlaceholder}</option>
+                    <option value="user">{userRole}</option>
+                    <option value="driver">{driverRole}</option>
+                    <option value="municipal">{municipalRole}</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <input type="text" id="username" class="form-control" placeholder="{usernamePlaceholder}" required />
+            </div>
+            <div class="mb-3">
+                <input type="password" id="password" class="form-control" placeholder="{passwordPlaceholder}" required />
+            </div>
+
+            <div class="d-grid mb-3">
+                <button type="submit" id="loginButton" class="btn btn-primary btn-lg">{loginText}</button>
+            </div>
+            <p id="errorMessage" class="text-danger fw-semibold"></p>
+
+            <div class="demo-buttons-container">
+                <p class="fw-bold mb-1">One-Click Demo:</p>
+                <button type="button" id="demoLoginUser" class="btn btn-lg btn-demo-user">Demo Login (User)</button>
+                <button type="button" id="demoLoginDriver" class="btn btn-lg btn-demo-driver">Demo Login (Driver)</button>
+                <button type="button" id="demoLoginMunicipal" class="btn btn-lg btn-demo-municipal">Demo Login (Municipal)</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+
+    <script>
+        const translations = {
+            en: {
+                title: "Login",
+                rolePlaceholder: "Select Role",
+                userRole: "User",
+                driverRole: "Driver",
+                municipalRole: "Municipal",
+                usernamePlaceholder: "Username",
+                passwordPlaceholder: "Password",
+                loginText: "Login",
+                demoLoginTextUser: "Demo Login (User)",
+                demoLoginTextDriver: "Demo Login (Driver)",
+                demoLoginTextMunicipal: "Demo Login (Municipal)",
+                errorFillAll: "Please fill all fields.",
+                errorInvalid: "Invalid credentials for this role."
+            },
+            hi: {
+                title: "लॉगिन",
+                rolePlaceholder: "भूमिका चुनें",
+                userRole: "उपयोगकर्ता",
+                driverRole: "ड्राइवर",
+                municipalRole: "नगर निगम",
+                usernamePlaceholder: "उपयोगकर्ता नाम",
+                passwordPlaceholder: "पासवर्ड",
+                loginText: "लॉगिन करें",
+                demoLoginTextUser: "डेमो लॉगिन (उपयोगकर्ता)",
+                demoLoginTextDriver: "डेमो लॉगिन (ड्राइवर)",
+                demoLoginTextMunicipal: "डेमो लॉगिन (नगर निगम)",
+                errorFillAll: "कृपया सभी फ़ील्ड भरें।",
+                errorInvalid: "इस भूमिका के लिए अमान्य विवरण।"
+            }
+        };
+
+        function applyLanguage(lang) {
+            document.getElementById('title').textContent = translations[lang].title;
+            document.getElementById('role').options[0].text = translations[lang].rolePlaceholder;
+            document.getElementById('role').options[1].text = translations[lang].userRole;
+            document.getElementById('role').options[2].text = translations[lang].driverRole;
+            document.getElementById('role').options[3].text = translations[lang].municipalRole;
+            document.getElementById('username').placeholder = translations[lang].usernamePlaceholder;
+            document.getElementById('password').placeholder = translations[lang].passwordPlaceholder;
+            document.getElementById('loginButton').textContent = translations[lang].loginText;
+            document.getElementById('demoLoginUser').textContent = translations[lang].demoLoginTextUser;
+            document.getElementById('demoLoginDriver').textContent = translations[lang].demoLoginTextDriver;
+            document.getElementById('demoLoginMunicipal').textContent = translations[lang].demoLoginTextMunicipal;
+            document.getElementById('errorMessage').textContent = '';
+        }
+
+        const languageSelect = document.getElementById('languageSelect');
+        const savedLang = localStorage.getItem('lang') || 'en';
+        languageSelect.value = savedLang;
+
+        languageSelect.addEventListener('change', () => {
+            const currentLang = languageSelect.value;
+            localStorage.setItem('lang', currentLang);
+            applyLanguage(currentLang);
+        });
+
+        const credentials = {
+            user: { username: 'user1', password: 'pass1', redirect: 'index1(sj).html' },
+            driver: { username: 'driver1', password: 'pass1', redirect: 'index2(hk).html' },
+            municipal: { username: 'municipal1', password: 'pass1', redirect: 'index3(aj).html' }
+        };
+
+        // Apply default language on load
+        window.addEventListener('load', () => {
+            applyLanguage(languageSelect.value);
+
+            // Auto redirect if already logged in
+            const role = localStorage.getItem('loggedInRole');
+            if (role && credentials[role]) {
+                window.location.href = credentials[role].redirect;
+            }
+        });
+
+        document.getElementById('loginForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const role = document.getElementById('role').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('errorMessage');
+            const lang = languageSelect.value;
+
+            errorMessage.textContent = '';
+
+            if (role === '' || username === '' || password === '') {
+                errorMessage.textContent = translations[lang].errorFillAll;
+                return;
+            }
+
+            if (credentials[role] && credentials[role].username === username && credentials[role].password === password) {
+                localStorage.setItem('loggedInRole', role);
+                localStorage.setItem('loggedInUser', username);
+                window.location.href = credentials[role].redirect;
+            } else {
+                errorMessage.textContent = translations[lang].errorInvalid;
+            }
+        });
+
+        // Demo login functionality for all roles
+        function performDemoLogin(role) {
+            localStorage.setItem('loggedInRole', role);
+            localStorage.setItem('loggedInUser', credentials[role].username);
+            
+            // Populate the form fields for visual feedback
+            document.getElementById('role').value = role;
+            document.getElementById('username').value = credentials[role].username;
+            document.getElementById('password').value = credentials[role].password;
+
+            window.location.href = credentials[role].redirect;
+        }
+
+        document.getElementById('demoLoginUser').addEventListener('click', () => {
+            performDemoLogin('user');
+        });
+
+        document.getElementById('demoLoginDriver').addEventListener('click', () => {
+            performDemoLogin('driver');
+        });
+
+        document.getElementById('demoLoginMunicipal').addEventListener('click', () => {
+            performDemoLogin('municipal');
+        });
+    </script>
+</body>
+</html>

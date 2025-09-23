@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Bus Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.14.1/mapbox-gl.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+
+    <style>
+        /* Replicating the FleetPass Admin Panel style */
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #10b981;
+            --secondary-dark: #059669;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+            --info-color: #3b82f6;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            
+            --border-radius: 12px;
+            --border-radius-lg: 16px;
+            --border-radius-xl: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #0f172a;
+            --bs-body-color: #f1f5f9;
+            --bg-primary: #1e293b;
+            --bg-secondary: #0f172a;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #475569;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: var(--transition);
+        }
+        
+        /* Card Styling */
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xl);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        /* Input and Select */
+        .form-control, .form-select {
+            border: 2px solid var(--border-color) !important;
+            background: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+            border-radius: var(--border-radius) !important;
+            transition: var(--transition) !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1) !important;
+        }
+
+        /* Buttons */
+        .btn-primary, .btn-success {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border: none;
+            color: white;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--accent-color), #d98a0b);
+            border: none;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .btn-primary:hover, .btn-success:hover, .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-outline-danger, .btn-outline-primary, .btn-outline-success, .btn-outline-info {
+            border-width: 2px;
+        }
+
+        /* List Group */
+        .list-group-item {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .list-group-item:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        .list-group-item .badge {
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+            color: white;
+        }
+
+        /* Headings & Text */
+        .raahi-title {
+            font-weight: 900; /* Increased font weight */
+            font-size: 3rem; /* Increased font size for a bolder look */
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px; /* A little tighter spacing for a modern look */
+        }
+        
+        .section-title {
+            font-weight: 700;
+            font-size: 1.5rem; /* Larger than default h5 */
+        }
+
+        .form-label, .info-label, .fw-semibold {
+            font-weight: 600; /* Bolder than default */
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .map-container {
+            border: 1px solid var(--border-color);
+            background: var(--bg-secondary);
+        }
+        
+        #map {
+            width: 100%;
+            height: 300px; /* Adjust height as needed */
+            border-radius: var(--border-radius);
+        }
+
+        .map-placeholder {
+            height: 300px;
+            background-color: var(--bg-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            border-radius: var(--border-radius);
+        }
+
+        .border.rounded {
+            border-color: var(--border-color) !important;
+            background: var(--bg-secondary) !important;
+            border-radius: var(--border-radius) !important;
+        }
+
+        .badge {
+            font-size: 0.9em; /* Slightly larger badge text */
+            padding: 0.6em 1em; /* Increased padding */
+            border-radius: 1rem;
+        }
+
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .theme-toggle svg {
+            width: 20px;
+            height: 20px;
+            color: var(--text-primary);
+        }
+        
+        /* Vault Card Styles */
+        #vaultCard {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            position: fixed;
+            width: 22rem;
+            border: none;
+        }
+
+        #vaultCard .card-header {
+            background: var(--primary-color) !important;
+            color: white !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+
+        #vaultCard .card-body {
+            background: var(--bg-primary);
+        }
+        
+        #vaultCard .card-footer {
+            background: var(--bg-secondary);
+        }
+
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+
+        .qr-code-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+        }
+        .qr-code-container img {
+            width: 120px;
+            height: 120px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 5px;
+            background: white;
+        }
+
+        .save-route-item {
+            cursor: pointer;
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            transition: var(--transition);
+        }
+
+        .save-route-item:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styles for the speech-to-text button */
+        .speech-input {
+            position: relative;
+        }
+
+        .speech-btn {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.2s;
+        }
+        
+        .speech-btn:hover {
+            color: var(--primary-color);
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div id="vaultCard" class="card shadow-lg border-0" style="display: none;">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 id="vaultInfoTitle" class="mb-0">🔐 Vault Information</h5>
+            <button id="closeVaultBtn" class="btn-close btn-close-white"></button>
+        </div>
+        <div class="card-body">
+            <div class="qr-code-container">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FakeQRCodeData" alt="Fake QR Code">
+            </div>
+            <div class="mb-3"><strong><span id="vaultUserNameLabel">User Name:</span></strong> <span id="vaultUserName">Sanyam Jain</span></div>
+            <div class="mb-3"><strong><span id="vaultEmailLabel">Email:</span></strong> <span id="vaultEmail">sanyam272727@gmail.com</span></div>
+            <div class="mb-3"><strong><span id="vaultBalanceLabel">Vault Balance:</span></strong> <span id="vaultBalance">₹50,000</span></div>
+            <div class="mb-3"><strong><span id="vaultLastLoginLabel">Last Login:</span></strong> <span id="vaultLastLogin">13 Sept 2025, 06:30 PM</span></div>
+            <div class="mb-3"><strong><span id="vaultIdLabel">Vault ID:</span></strong> <span id="vaultId">VAULT-2025-001</span></div>
+            <button id="accessVaultBtn" class="btn btn-success w-100">Access Vault</button>
+        </div>
+        <div class="card-footer text-muted text-center">
+            <span id="vaultSecureText">Secure & Encrypted 🔒</span>
+        </div>
+    </div>
+    
+    <div class="container py-3 d-flex justify-content-end align-items-center">
+        <select id="languageSelect" class="form-select w-auto me-2">
+            <option value="en">English</option>
+            <option value="hi">हिंदी</option>
+        </select>
+        <button id="theme-toggle" class="theme-toggle me-2">
+            <i id="sun-icon" class="bi bi-sun-fill"></i>
+            <i id="moon-icon" class="bi bi-moon-fill hidden"></i>
+        </button>
+        <button onclick="logout()" class="btn btn-outline-danger btn-sm logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</button>
+        <button class="btn btn-outline-danger btn-sm ms-2 sos-btn"><i class="bi bi-exclamation-octagon-fill"></i> SOS</button>
+        <button id="vaultBtn" class="btn btn-primary btn-sm ms-2"><i class="bi bi-safe me-1"></i> Vault</button>
+    </div>
+
+    <div class="container py-5" id="main-container">
+        
+        <h1 id="raahi-title" class="raahi-title text-center mb-4">RAAHI</h1>
+        <div class="card shadow-lg mb-4">
+            <div class="card-body">
+                <div class="mb-3 speech-input">
+                    <input type="text" id="from" class="form-control form-control-lg" placeholder="From"/>
+                    <button class="speech-btn" id="from-speech-btn"><i class="bi bi-mic-fill"></i></button>
+                </div>
+                <div class="mb-3 speech-input">
+                    <input type="text" id="to" class="form-control form-control-lg" placeholder="To"/>
+                    <button class="speech-btn" id="to-speech-btn"><i class="bi bi-mic-fill"></i></button>
+                </div>
+                <div class="mb-3">
+                    <input type="time" id="time" class="form-control form-control-lg"/>
+                </div>
+                <div class="d-grid">
+                    <button id="searchButton" class="btn btn-primary btn-lg" onclick="showBusList()">Search</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="bus-list" class="list-group hidden">
+            <h5 id="availableBusesTitle" class="mb-3 fw-semibold text-center text-secondary">Available Buses</h5>
+            <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 1', 'Dewas', 'Sehore')">
+                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 1</span> <span class="badge float-end">Near Stop X</span>
+            </button>
+            <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 2', 'Maksi', 'Bhopal')">
+                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 2</span> <span class="badge float-end">Near Stop Y</span>
+            </button>
+            <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 3', 'Sehore', 'Indore')">
+                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 3</span> <span class="badge float-end">Near Stop Z</span>
+            </button>
+        </div>
+        
+        <div id="user-vault-container" class="card shadow-lg p-4 mt-5 hidden">
+            <h5 id="vaultTitle" class="fw-bold mb-3 text-primary">My Saved Routes</h5>
+            <div id="vaultList" class="list-group">
+                <p id="noRoutesMessage" class="text-muted text-center mt-3">No saved routes yet. Search for a route and save it to add here.</p>
+            </div>
+        </div>
+        
+         <div class="card shadow-lg p-4 mt-5">
+            <h5 id="lostItemTitle" class="fw-bold mb-3 text-primary">Report a Lost Item</h5>
+            <div class="mb-3">
+                <textarea id="lostItemDescription" class="form-control" rows="4" placeholder="Describe the lost item and where/when you lost it."></textarea>
+            </div>
+            <div class="d-grid">
+                <button id="sendLostItemReport" class="btn btn-warning btn-lg">Send Report to Municipal</button>
+            </div>
+            <p id="lostItemStatus" class="mt-2 text-center"></p>
+        </div>
+    </div>
+
+    <div id="bus-detail-page" class="container-fluid hidden bg-white vh-100 py-4">
+        <div class="d-flex align-items-center mb-3">
+            <button class="btn btn-outline-primary me-3" onclick="closeBusDetails()"><i class="bi bi-arrow-left"></i></button>
+            <h3 id="bus-title" class="mb-0 fw-bold text-primary">Bus Title</h3>
+        </div>
+
+        <div id="bus-card-container" class="card shadow-lg p-4 mb-4 hidden">
+            <h5 id="busCardTitle" class="fw-bold mb-3 text-primary">Bus Details</h5>
+            <div class="bus-info d-grid gap-3">
+                <div class="info-item p-3 d-flex justify-content-between align-items-center">
+                    <span id="busIdLabel" class="info-label fw-medium text-secondary">Bus ID:</span>
+                    <span id="busIdValue" class="info-value fw-semibold text-primary">N/A</span>
+                </div>
+                <div class="info-item p-3 d-flex justify-content-between align-items-center">
+                    <span id="busDriverLabel" class="info-label fw-medium text-secondary">Driver:</span>
+                    <span id="busDriverValue" class="info-value fw-semibold text-primary">N/A</span>
+                </div>
+                <div class="info-item p-3 d-flex justify-content-between align-items-center">
+                    <span id="busSpeedLabel" class="info-label fw-medium text-secondary">Speed:</span>
+                    <span id="busSpeedValue" class="info-value fw-semibold text-primary">N/A</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mb-4">
+            <button id="lowBandwidthBtn" class="btn btn-warning me-2" onclick="showRoute('low')"><i class="bi bi-signal"></i> Low Bandwidth</button>
+            <button id="highBandwidthBtn" class="btn btn-primary" onclick="showRoute('high')"><i class="bi bi-map"></i> High Bandwidth</button>
+            <button id="saveRouteBtn" class="btn btn-success ms-2"><i class="bi bi-bookmark-fill me-1"></i> Save Route</button>
+        </div>
+
+        <div id="map-view" class="hidden">
+            <div id="low-bandwidth" class="text-center hidden mb-4">
+                <h5 id="lowBandwidthTitle" class="fw-bold mb-3">Bus Route (Low Bandwidth)</h5>
+                <div class="d-flex justify-content-center">
+                    <svg width="300" height="400" viewBox="0 0 300 400" xmlns="http://www.w3.org/2000/svg">
+                        <line x1="150" y1="20" x2="150" y2="380" stroke="#007bff" stroke-width="4" stroke-dasharray="8,4"/>
+                        <circle id="stop-start" cx="150" cy="50" r="8" fill="#28a745" style="cursor:pointer"/>
+                        <text x="160" y="55" font-family="Arial" font-size="12" fill="var(--text-secondary)">Start</text>
+                        <circle id="stop1" cx="150" cy="150" r="8" fill="#ffc107" style="cursor:pointer"/>
+                        <text x="160" y="155" font-family="Arial" font-size="12" fill="var(--text-secondary)">Stop 1</text>
+                        <circle id="stop2" cx="150" cy="250" r="8" fill="#ffc107" style="cursor:pointer"/>
+                        <text x="160" y="255" font-family="Arial" font-size="12" fill="var(--text-secondary)">Stop 2</text>
+                        <circle id="stop-end" cx="150" cy="350" r="8" fill="#dc3545" style="cursor:pointer"/>
+                        <text x="160" y="355" font-family="Arial" font-size="12" fill="var(--text-secondary)">End</text>
+                    </svg>
+                </div>
+                <div id="stop-details" class="mt-3 text-start border rounded p-3 bg-light">
+                    <h6 id="stopDetailsTitle" class="fw-semibold text-primary">Stop Details</h6>
+                    <p id="stop-name" class="text-secondary">Click on a stop to see details</p>
+                    <p id="arrival-time" class="text-secondary"></p>
+                    <p id="distance" class="text-secondary"></p>
+                </div>
+                <div class="text-center mt-3">
+                    <button id="smsButton" class="btn btn-warning" onclick="smsWhenArrives()"><i class="bi bi-chat-dots"></i> SMS Me When Bus Arrives</button>
+                </div>
+            </div>
+
+            <div id="high-bandwidth" class="text-center hidden mb-4">
+                <h5 id="highBandwidthTitle" class="fw-bold mb-3">Bus Route (High Bandwidth)</h5>
+                <div id="map-container" class="map-container rounded shadow">
+                    <div id="map" class="rounded"></div>
+                </div>
+            </div>
+
+            <div id="tracking-info" class="row hidden">
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <h5 id="getInTitle" class="fw-semibold">Get-In Stop</h5>
+                            <p id="track-to-get-in" class="text-muted small"></p>
+                            <button class="btn btn-primary btn-sm" onclick="trackToStop()"><i class="bi bi-geo-alt"></i> Track Me to Stop</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body text-center">
+                            <h5 id="getOutTitle" class="fw-semibold">Get-Out Stop</h5>
+                            <p id="get-out-stop" class="fw-bold text-success"></p>
+                            <p id="track-to-destination" class="text-muted small"></p>
+                            <button class="btn btn-success btn-sm" onclick="trackToDestination()"><i class="bi bi-geo-alt-fill"></i> Track Me to Destination</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</body>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const translations = {
+            en: {
+                raahiTitle: "RAAHI",
+                pageTitle: "Bus Tracker",
+                fromPlaceholder: "From",
+                toPlaceholder: "To",
+                timePlaceholder: "Time",
+                search: "Search",
+                availableBuses: "Available Buses",
+                lowBandwidth: "Low Bandwidth",
+                highBandwidth: "High Bandwidth",
+                lowBandwidthTitle: "Bus Route (Low Bandwidth)",
+                highBandwidthTitle: "Bus Route (High Bandwidth)",
+                stopDetailsTitle: "Stop Details",
+                smsButton: "SMS Me When Bus Arrives",
+                getInTitle: "Get-In Stop",
+                getOutTitle: "Get-Out Stop",
+                trackToStop: "Track Me to Stop",
+                trackToDestination: "Track Me to Destination",
+                busCardTitle: "Bus Details",
+                busIdLabel: "Bus ID:",
+                busDriverLabel: "Driver:",
+                busSpeedLabel: "Speed:",
+                logout: "Logout",
+                sos: "SOS",
+                vaultTitle: "Vault Information",
+                userName: "User Name:",
+                email: "Email:",
+                vaultBalance: "Vault Balance:",
+                lastLogin: "Last Login:",
+                vaultId: "Vault ID:",
+                accessVault: "Access Vault",
+                secureText: "Secure & Encrypted 🔒",
+                vaultBtn: "Vault",
+                saveRouteBtn: "Save Route",
+                savedRoutesTitle: "My Saved Routes",
+                noRoutesMessage: "No saved routes yet. Search for a route and save it to add here.",
+                editRoute: "Edit",
+                deleteRoute: "Delete",
+                updateRoute: "Update",
+                cancelUpdate: "Cancel",
+                lostItemTitle: "Report a Lost Item",
+                lostItemPlaceholder: "Describe the lost item and where/when you lost it.",
+                sendReport: "Send Report to Municipal",
+                reportSuccess: "Report sent successfully! The municipal authority will be notified."
+            },
+            hi: {
+                raahiTitle: "राही",
+                pageTitle: "बस ट्रैकर",
+                fromPlaceholder: "कहाँ से",
+                toPlaceholder: "कहाँ तक",
+                timePlaceholder: "समय",
+                search: "खोजें",
+                availableBuses: "उपलब्ध बसें",
+                lowBandwidth: "कम बैंडविड्थ",
+                highBandwidth: "उच्च बैंडविड्थ",
+                lowBandwidthTitle: "बस मार्ग (कम बैंडविड्थ)",
+                highBandwidthTitle: "बस मार्ग (उच्च बैंडविड्थ)",
+                stopDetailsTitle: "स्टॉप विवरण",
+                smsButton: "जब बस आए तो SMS करें",
+                getInTitle: "चढ़ने का स्टॉप",
+                getOutTitle: "उतरने का स्टॉप",
+                trackToStop: "स्टॉप तक ट्रैक करें",
+                trackToDestination: "गंतव्य तक ट्रैक करें",
+                busCardTitle: "बस विवरण",
+                busIdLabel: "बस आईडी:",
+                busDriverLabel: "ड्राइवर:",
+                busSpeedLabel: "गति:",
+                logout: "लॉगआउट",
+                sos: "एसओएस",
+                vaultTitle: "वॉल्ट जानकारी",
+                userName: "उपयोगकर्ता का नाम:",
+                email: "ईमेल:",
+                vaultBalance: "वॉल्ट बैलेंस:",
+                lastLogin: "अंतिम लॉगिन:",
+                vaultId: "वॉल्ट आईडी:",
+                accessVault: "वॉल्ट तक पहुंचें",
+                secureText: "सुरक्षित और एन्क्रिप्टेड 🔒",
+                vaultBtn: "वॉल्ट",
+                saveRouteBtn: "मार्ग सहेजें",
+                savedRoutesTitle: "मेरे सहेजे गए मार्ग",
+                noRoutesMessage: "अभी तक कोई मार्ग सहेजा नहीं गया है। एक मार्ग खोजें और उसे यहां जोड़ने के लिए सहेजें।",
+                editRoute: "संपादित करें",
+                deleteRoute: "मिटाएँ",
+                updateRoute: "अपडेट करें",
+                cancelUpdate: "रद्द करें",
+                lostItemTitle: "खोई हुई वस्तु की रिपोर्ट करें",
+                lostItemPlaceholder: "खोई हुई वस्तु का विवरण और आपने उसे कहाँ/कब खोया था, बताएं।",
+                sendReport: "नगर निगम को रिपोर्ट भेजें",
+                reportSuccess: "रिपोर्ट सफलतापूर्वक भेजी गई! नगर निगम को सूचित किया जाएगा।"
+            }
+        };
+        
+        // Dark mode setup
+        const body = document.body;
+        const themeToggle = document.getElementById('theme-toggle');
+        const sunIcon = document.getElementById('sun-icon');
+        const moonIcon = document.getElementById('moon-icon');
+
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-bs-theme', savedTheme);
+        if (savedTheme === 'dark') {
+            sunIcon.classList.add('hidden');
+            moonIcon.classList.remove('hidden');
+        } else {
+            moonIcon.classList.add('hidden');
+            sunIcon.classList.remove('hidden');
+        }
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = body.getAttribute('data-bs-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-bs-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+
+            if (newTheme === 'dark') {
+                sunIcon.classList.add('hidden');
+                moonIcon.classList.remove('hidden');
+            } else {
+                moonIcon.classList.add('hidden');
+                sunIcon.classList.remove('hidden');
+            }
+        });
+
+        // Mapbox specific variables
+        let mapInitialized = false;
+
+        function initMap() {
+            if (!mapInitialized) {
+                // ADD YOUR MAPBOX ACCESS TOKEN HERE
+                mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+                
+                const map = new mapboxgl.Map({
+                    container: 'map', // container ID
+                    style: 'mapbox://styles/mapbox/streets-v12', // style URL
+                    center: [77.4126, 23.2599], // starting position [lng, lat] (Bhopal)
+                    zoom: 12 // starting zoom
+                });
+
+                // Add a marker for the current bus location
+                const el = document.createElement('div');
+                el.className = 'bus-marker';
+                el.innerHTML = '<i class="bi bi-bus-front-fill text-primary fs-3"></i>'; // Bootstrap icon as marker
+                new mapboxgl.Marker(el)
+                    .setLngLat([77.42, 23.26])
+                    .addTo(map);
+
+                mapInitialized = true;
+            }
+        }
+
+        function toggleVault() {
+            const vaultCard = document.getElementById('vaultCard');
+            if (vaultCard.style.display === 'none') {
+                vaultCard.style.display = 'block';
+            } else {
+                vaultCard.style.display = 'none';
+            }
+        }
+        
+        document.getElementById('vaultBtn').addEventListener('click', toggleVault);
+        document.getElementById('closeVaultBtn').addEventListener('click', toggleVault);
+
+        let currentBusDetails = { name: '', from: '', to: '' };
+
+        function saveRouteToVault() {
+            const lang = document.getElementById('languageSelect').value;
+            const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes')) || [];
+            
+            // Get data from main search form
+            const from = document.getElementById('from').value.trim();
+            const to = document.getElementById('to').value.trim();
+            const time = document.getElementById('time').value.trim();
+
+            if (!from || !to) {
+                alert('Please enter both From and To locations to save a route.');
+                return;
+            }
+
+            const newRoute = { from, to, time, name: `${from} → ${to}` };
+            
+            const isDuplicate = savedRoutes.some(route => route.from === newRoute.from && route.to === newRoute.to);
+            if (isDuplicate) {
+                alert(`Route from "${newRoute.from}" to "${newRoute.to}" is already saved!`);
+                return;
+            }
+            
+            savedRoutes.push(newRoute);
+            localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
+            
+            renderUserVault();
+            alert(`Route from "${newRoute.from}" to "${newRoute.to}" saved successfully!`);
+        }
+        
+        function renderUserVault() {
+            const vaultContainer = document.getElementById('user-vault-container');
+            const vaultList = document.getElementById('vaultList');
+            const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes')) || [];
+            const lang = document.getElementById('languageSelect').value;
+
+            if (savedRoutes.length > 0) {
+                vaultContainer.classList.remove('hidden');
+                vaultList.innerHTML = ''; // Clear existing list
+                savedRoutes.forEach((route, index) => {
+                    const routeItem = document.createElement('div');
+                    routeItem.className = 'list-group-item list-group-item-action d-flex flex-column align-items-start mb-2';
+                    routeItem.innerHTML = `
+                        <div class="w-100 d-flex justify-content-between align-items-center mb-2">
+                            <div class="d-flex align-items-center">
+                                <i class="bi bi-bookmark-fill me-2 text-success"></i>
+                                <span class="fw-semibold">${route.name}</span>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-sm btn-outline-primary" data-route-index="${index}" onclick="loadSavedRoute(${index})">
+                                    <i class="bi bi-search"></i>
+                                </button>
+                                <button class="btn btn-sm btn-outline-danger" data-route-index="${index}" onclick="deleteRoute(${index})">
+                                    <i class="bi bi-trash-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <small class="text-muted d-block w-100">
+                            <strong>From:</strong> ${route.from} &nbsp;|&nbsp; 
+                            <strong>To:</strong> ${route.to} &nbsp;|&nbsp; 
+                            <strong>Time:</strong> ${route.time || 'N/A'}
+                        </small>
+                    `;
+                    vaultList.appendChild(routeItem);
+                });
+            } else {
+                vaultContainer.classList.remove('hidden');
+                vaultList.innerHTML = `<p id="noRoutesMessage" class="text-muted text-center mt-3">${translations[lang].noRoutesMessage}</p>`;
+            }
+        }
+        
+        function loadSavedRoute(index) {
+            const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes')) || [];
+            if (index >= 0 && index < savedRoutes.length) {
+                const route = savedRoutes[index];
+                document.getElementById('from').value = route.from;
+                document.getElementById('to').value = route.to;
+                document.getElementById('time').value = route.time || '';
+                
+                showBusList();
+                document.getElementById('bus-list').innerHTML = `
+                    <h5 id="availableBusesTitle" class="mb-3 fw-semibold text-center text-secondary">${translations[document.getElementById('languageSelect').value].availableBuses}</h5>
+                    <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('${route.name}', '${route.from}', '${route.to}')">
+                        <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">${route.name}</span> <span class="badge float-end">Saved Route</span>
+                    </button>
+                `;
+            }
+        }
+        
+        function deleteRoute(index) {
+            let savedRoutes = JSON.parse(localStorage.getItem('savedRoutes')) || [];
+            if (confirm(`Are you sure you want to delete this route?`)) {
+                savedRoutes.splice(index, 1);
+                localStorage.setItem('savedRoutes', JSON.stringify(savedRoutes));
+                renderUserVault();
+            }
+        }
+
+        function applyLanguage(lang) {
+            const t = translations[lang];
+            
+            // Correctly update RAAHI title
+            const raahiTitleElement = document.getElementById('raahi-title');
+            if (raahiTitleElement) {
+                 raahiTitleElement.textContent = t.raahiTitle;
+            }
+
+            // Main page elements
+            const pageTitleElement = document.getElementById('page-title');
+            if (pageTitleElement) {
+                pageTitleElement.innerHTML = `<i class="bi bi-bus-front-fill"></i> ${t.pageTitle}`;
+            }
+            
+            const fromInput = document.getElementById('from');
+            if (fromInput) fromInput.placeholder = t.fromPlaceholder;
+            
+            const toInput = document.getElementById('to');
+            if (toInput) toInput.placeholder = t.toPlaceholder;
+            
+            const timeInput = document.getElementById('time');
+            if (timeInput) timeInput.placeholder = t.timePlaceholder;
+            
+            const searchButton = document.getElementById('searchButton');
+            if (searchButton) searchButton.textContent = t.search;
+            
+            const availableBusesTitle = document.getElementById('availableBusesTitle');
+            if (availableBusesTitle) {
+                availableBusesTitle.textContent = t.availableBuses;
+            }
+
+            // Bus Details Page (elements may not exist on load)
+            const lowBandwidthBtn = document.getElementById('lowBandwidthBtn');
+            if (lowBandwidthBtn) lowBandwidthBtn.innerHTML = `<i class="bi bi-signal"></i> ${t.lowBandwidth}`;
+            
+            const highBandwidthBtn = document.getElementById('highBandwidthBtn');
+            if (highBandwidthBtn) highBandwidthBtn.innerHTML = `<i class="bi bi-map"></i> ${t.highBandwidth}`;
+
+            const lowBandwidthTitle = document.getElementById('lowBandwidthTitle');
+            if (lowBandwidthTitle) lowBandwidthTitle.textContent = t.lowBandwidthTitle;
+            
+            const highBandwidthTitle = document.getElementById('highBandwidthTitle');
+            if (highBandwidthTitle) highBandwidthTitle.textContent = t.highBandwidthTitle;
+            
+            const stopDetailsTitle = document.getElementById('stopDetailsTitle');
+            if (stopDetailsTitle) stopDetailsTitle.textContent = t.stopDetailsTitle;
+            
+            const smsButton = document.getElementById('smsButton');
+            if (smsButton) smsButton.innerHTML = `<i class="bi bi-chat-dots"></i> ${t.smsButton}`;
+            
+            const getInTitle = document.getElementById('getInTitle');
+            if (getInTitle) getInTitle.textContent = t.getInTitle;
+            
+            const getOutTitle = document.getElementById('getOutTitle');
+            if (getOutTitle) getOutTitle.textContent = t.getOutTitle;
+            
+            const trackingPrimaryBtn = document.querySelector('#tracking-info .btn-primary');
+            if (trackingPrimaryBtn) trackingPrimaryBtn.innerHTML = `<i class="bi bi-geo-alt"></i> ${t.trackToStop}`;
+            
+            const trackingSuccessBtn = document.querySelector('#tracking-info .btn-success');
+            if (trackingSuccessBtn) trackingSuccessBtn.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${t.trackToDestination}`;
+            
+            const busCardTitle = document.getElementById('busCardTitle');
+            if (busCardTitle) busCardTitle.textContent = t.busCardTitle;
+            
+            const busIdLabel = document.getElementById('busIdLabel');
+            if (busIdLabel) busIdLabel.textContent = t.busIdLabel;
+            
+            const busDriverLabel = document.getElementById('busDriverLabel');
+            if (busDriverLabel) busDriverLabel.textContent = t.busDriverLabel;
+            
+            const busSpeedLabel = document.getElementById('busSpeedLabel');
+            if (busSpeedLabel) busSpeedLabel.textContent = t.busSpeedLabel;
+            
+            const saveRouteBtn = document.getElementById('saveRouteBtn');
+            if (saveRouteBtn) saveRouteBtn.innerHTML = `<i class="bi bi-bookmark-fill me-1"></i> ${t.saveRouteBtn}`;
+            
+            // Saved Routes Section
+            const vaultTitle = document.getElementById('vaultTitle');
+            if (vaultTitle) vaultTitle.textContent = t.savedRoutesTitle;
+            
+            const noRoutesMessage = document.getElementById('noRoutesMessage');
+            if (noRoutesMessage) {
+                noRoutesMessage.textContent = t.noRoutesMessage;
+            }
+            
+            // Header Buttons
+            document.querySelector('.logout-btn').innerHTML = `<i class="bi bi-box-arrow-right"></i> ${t.logout}`;
+            document.querySelector('.sos-btn').innerHTML = `<i class="bi bi-exclamation-octagon-fill"></i> ${t.sos}`;
+            document.getElementById('vaultBtn').innerHTML = `<i class="bi bi-safe me-1"></i> ${t.vaultBtn}`;
+
+            // Vault Card Text
+            document.getElementById('vaultInfoTitle').textContent = t.vaultTitle;
+            document.getElementById('vaultUserNameLabel').textContent = t.userName;
+            document.getElementById('vaultEmailLabel').textContent = t.email;
+            document.getElementById('vaultBalanceLabel').textContent = t.vaultBalance;
+            document.getElementById('vaultLastLoginLabel').textContent = t.lastLogin;
+            document.getElementById('vaultIdLabel').textContent = t.vaultId;
+            document.getElementById('accessVaultBtn').textContent = t.accessVault;
+            document.getElementById('vaultSecureText').textContent = t.secureText;
+
+            // Lost Item section
+            const lostItemTitle = document.getElementById('lostItemTitle');
+            if(lostItemTitle) lostItemTitle.textContent = t.lostItemTitle;
+
+            const lostItemDescription = document.getElementById('lostItemDescription');
+            if(lostItemDescription) lostItemDescription.placeholder = t.lostItemPlaceholder;
+
+            const sendLostItemReport = document.getElementById('sendLostItemReport');
+            if(sendLostItemReport) sendLostItemReport.textContent = t.sendReport;
+            
+            // Call this to update dynamically generated list content
+            renderUserVault(); 
+        }
+
+        window.addEventListener('load', () => {
+            const defaultLang = localStorage.getItem('lang') || 'en';
+            document.getElementById('languageSelect').value = defaultLang;
+            applyLanguage(defaultLang);
+            renderUserVault();
+
+            const role = localStorage.getItem('loggedInRole');
+            const username = localStorage.getItem('loggedInUser');
+            if (role !== 'user') {
+                alert('Please login as User');
+                window.location.href = 'ALoginPage.html';
+            }
+        });
+        document.getElementById('languageSelect').addEventListener('change', (event) => {
+            const selectedLang = event.target.value;
+            localStorage.setItem('lang', selectedLang);
+            applyLanguage(selectedLang);
+        });
+
+        let getInStop = "";
+        let getOutStop = "";
+
+        function showBusList() {
+            document.getElementById('bus-list').classList.remove('hidden');
+            document.getElementById('user-vault-container').classList.add('hidden');
+        }
+
+        function openBusDetails(name, inStop, outStop) {
+            document.getElementById('main-container').classList.add('hidden');
+            document.getElementById('bus-detail-page').classList.remove('hidden');
+            
+            const busTitle = document.getElementById('bus-title');
+            if (busTitle) busTitle.textContent = name;
+
+            currentBusDetails = { name, from: inStop, to: outStop };
+            
+            const busCard = document.getElementById('bus-card-container');
+            if (busCard) busCard.classList.remove('hidden');
+            
+            const busIdValue = document.getElementById('busIdValue');
+            if (busIdValue) busIdValue.textContent = name;
+            
+            const busDriverValue = document.getElementById('busDriverValue');
+            if (busDriverValue) busDriverValue.textContent = "John Doe";
+            
+            const busSpeedValue = document.getElementById('busSpeedValue');
+            if (busSpeedValue) busSpeedValue.textContent = "55 mph";
+
+            const mapView = document.getElementById('map-view');
+            if (mapView) mapView.classList.add('hidden');
+            
+            const lowBandwidth = document.getElementById('low-bandwidth');
+            if (lowBandwidth) lowBandwidth.classList.add('hidden');
+            
+            const highBandwidth = document.getElementById('high-bandwidth');
+            if (highBandwidth) highBandwidth.classList.add('hidden');
+            
+            const trackingInfo = document.getElementById('tracking-info');
+            if (trackingInfo) trackingInfo.classList.add('hidden');
+
+            getInStop = inStop;
+            getOutStop = outStop;
+        }
+
+        function closeBusDetails() {
+            document.getElementById('main-container').classList.remove('hidden');
+            document.getElementById('bus-detail-page').classList.add('hidden');
+        }
+
+        function showRoute(type) {
+            const mapView = document.getElementById('map-view');
+            if (mapView) mapView.classList.remove('hidden');
+
+            const trackingInfo = document.getElementById('tracking-info');
+            if (trackingInfo) trackingInfo.classList.remove('hidden');
+            
+            const lowBandwidth = document.getElementById('low-bandwidth');
+            const highBandwidth = document.getElementById('high-bandwidth');
+
+            if (lowBandwidth) lowBandwidth.classList.add('hidden');
+            if (highBandwidth) highBandwidth.classList.add('hidden');
+
+            if(type === 'low') {
+                if (lowBandwidth) lowBandwidth.classList.remove('hidden');
+            } else {
+                if (highBandwidth) highBandwidth.classList.remove('hidden');
+                initMap();
+            }
+
+            const lang = document.getElementById('languageSelect').value;
+            const t = translations[lang];
+
+            const getInStopEl = document.getElementById('get-in-stop');
+            if (getInStopEl) getInStopEl.textContent = getInStop;
+
+            const trackToGetIn = document.getElementById('track-to-get-in');
+            if (trackToGetIn) trackToGetIn.textContent = `${t.trackToStop} ${getInStop}`;
+
+            const getOutStopEl = document.getElementById('get-out-stop');
+            if (getOutStopEl) getOutStopEl.textContent = getOutStop;
+
+            const trackToDestination = document.getElementById('track-to-destination');
+            if (trackToDestination) trackToDestination.textContent = `${t.trackToDestination} ${getOutStop}`;
+        }
+
+        function trackToStop() {
+            alert("Tracking from current location to " + getInStop + "...");
+        }
+
+        function trackToDestination() {
+            alert("Tracking from " + getOutStop + " to your final destination...");
+        }
+
+        function smsWhenArrives() {
+            alert("You will receive an SMS when the bus arrives at your stop!");
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'ALoginPage.html';
+        }
+
+        // Voice-to-Text Feature
+        const fromSpeechBtn = document.getElementById('from-speech-btn');
+        const toSpeechBtn = document.getElementById('to-speech-btn');
+
+        if ('webkitSpeechRecognition' in window) {
+            const recognition = new webkitSpeechRecognition();
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            recognition.lang = 'en-US';
+
+            let activeInput = null;
+
+            fromSpeechBtn.addEventListener('click', () => {
+                activeInput = document.getElementById('from');
+                recognition.lang = document.getElementById('languageSelect').value === 'hi' ? 'hi-IN' : 'en-US';
+                recognition.start();
+            });
+
+            toSpeechBtn.addEventListener('click', () => {
+                activeInput = document.getElementById('to');
+                recognition.lang = document.getElementById('languageSelect').value === 'hi' ? 'hi-IN' : 'en-US';
+                recognition.start();
+            });
+
+            recognition.onresult = (event) => {
+                const speechResult = event.results[0][0].transcript;
+                if (activeInput) {
+                    activeInput.value = speechResult;
+                }
+            };
+
+            recognition.onerror = (event) => {
+                console.error('Speech recognition error', event.error);
+                alert('Speech recognition error. Please try again.');
+            };
+        } else {
+            console.warn('Speech recognition not supported in this browser.');
+            fromSpeechBtn.classList.add('hidden');
+            toSpeechBtn.classList.add('hidden');
+        }
+
+        // New Lost Item Report Feature
+        document.getElementById('sendLostItemReport').addEventListener('click', () => {
+            const lang = document.getElementById('languageSelect').value;
+            const lostItemDescription = document.getElementById('lostItemDescription').value.trim();
+            const lostItemStatus = document.getElementById('lostItemStatus');
+            
+            lostItemStatus.textContent = ''; // Clear previous status messages
+
+            if (lostItemDescription === '') {
+                lostItemStatus.textContent = translations[lang].lostItemPlaceholder;
+                lostItemStatus.classList.add('text-danger');
+                lostItemStatus.classList.remove('text-success');
+                return;
+            }
+
+            const userName = localStorage.getItem('loggedInUser') || 'User';
+            const timestamp = new Date().toLocaleString();
+
+            const newReport = {
+                reporter: userName,
+                type: 'Lost Item',
+                description: lostItemDescription,
+                timestamp: timestamp
+            };
+            
+            // Simulate sending to municipal by saving to localStorage
+            const municipalReports = JSON.parse(localStorage.getItem('municipalReports')) || [];
+            municipalReports.push(newReport);
+            localStorage.setItem('municipalReports', JSON.stringify(municipalReports));
+
+            // Display success message
+            const t = translations[lang];
+            lostItemStatus.textContent = t.reportSuccess;
+            lostItemStatus.classList.remove('text-danger');
+            lostItemStatus.classList.add('text-success');
+
+            // Clear the form
+            document.getElementById('lostItemDescription').value = '';
+        });
+
+    </script>
+</body>
+</html>

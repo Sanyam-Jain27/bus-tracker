@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Municipal Panel</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" crossorigin="" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        /* Custom CSS to replicate the original design on top of Bootstrap */
+        :root {
+            --primary-color: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary-color: #10b981;
+            --secondary-dark: #059669;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            --warning-color: #f59e0b;
+            --success-color: #10b981;
+            --info-color: #3b82f6;
+            
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            
+            --border-radius: 12px;
+            --border-radius-xl: 20px;
+        }
+
+        [data-bs-theme="dark"] {
+            --bs-body-bg: #0f172a;
+            --bs-body-color: #f1f5f9;
+            --bg-primary: #1e293b;
+            --bg-secondary: #0f172a;
+            --bg-tertiary: #334155;
+            --text-primary: #f1f5e9;
+            --text-secondary: #cbd5e1;
+            --text-muted: #64748b;
+            --border-color: #475569;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header {
+            background: var(--bg-primary);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.75rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .card {
+            background: var(--bg-primary);
+            border-radius: var(--border-radius-xl);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        .card-title-custom {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title-custom::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--primary-color);
+            border-radius: 50%;
+        }
+
+        .card-description {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        #map {
+            height: 300px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .bus-info .info-item, .stat-item {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .list-item {
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .list-item:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .form-control, .form-select {
+            border: 2px solid var(--border-color) !important;
+            background: var(--bg-secondary) !important;
+            color: var(--text-primary) !important;
+            border-radius: var(--border-radius) !important;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color) !important;
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1) !important;
+        }
+
+        .btn-primary, .btn-secondary, .logout-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-primary:hover, .btn-secondary:hover, .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, var(--secondary-color), var(--secondary-dark));
+        }
+
+        .btn-outline-custom {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--bg-tertiary);
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.1);
+        }
+
+        .qr-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem;
+            background: var(--bg-secondary);
+            border-radius: var(--border-radius);
+            border: 2px dashed var(--border-color);
+        }
+
+        .qr-message {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        .fade-in { animation: fadeIn 0.5s ease-out forwards; }
+        .slide-in { animation: slideIn 0.3s ease-out forwards; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .hidden { display: none !important; }
+
+        @media (max-width: 768px) {
+            .header-content { flex-direction: column; }
+            .welcome-text { display: none; }
+        }
+    </style>
+</head>
+<body data-bs-theme="light">
+    <header class="header shadow-sm py-4">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <h1 id="panelTitle" class="logo">Municipal Panel</h1>
+            <div class="d-flex align-items-center gap-3">
+                <span id="welcomeText" class="welcome-text d-none d-md-block text-secondary fw-medium">Welcome, Admin!</span>
+                
+                <select id="languageSelect" class="form-select form-select-sm w-auto">
+                    <option value="en">English</option>
+                    <option value="hi">हिंदी</option>
+                </select>
+
+                <button id="theme-toggle" class="btn btn-light rounded-circle p-2 shadow-sm" style="width: 48px; height: 48px;">
+                    <svg id="sun-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg id="moon-icon" class="hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+                <button onclick="logout()" class="btn btn-danger py-2 px-3 rounded-3 d-flex align-items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
+                    </svg>
+                    Logout
+                </button>
+        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> SOS</button>
+
+
+            </div>
+        </div>
+    </header>
+
+    <main class="container-fluid py-5">
+        <div class="dashboard-masonry-grid">
+            <div class="card p-4 fade-in">
+                <h2 id="fleetMonitoringTitle" class="card-title-custom">Fleet Monitoring</h2>
+                
+                <div id="map" class="mb-4 text-center">
+                    <img src="image.png" alt="Fleet tracking map with buses" width="100%" style="max-width: 1600px;height:270px">
+                </div>
+                
+                <div class="bus-info d-grid gap-3">
+                    <div class="info-item p-3 d-flex justify-content-between align-items-center bg-light rounded">
+                        <span id="busIdLabel" class="info-label fw-medium text-secondary">Bus ID:</span>
+                        <span class="info-value fw-semibold text-primary">B-214 | Route 7</span>
+                    </div>
+                    <div class="info-item p-3 d-flex justify-content-between align-items-center bg-light rounded">
+                        <span id="driverLabel" class="info-label fw-medium text-secondary">Driver:</span>
+                        <span class="info-value fw-semibold text-primary">Jane Doe | 45 mph</span>
+                    </div>
+                    <div class="info-item p-3 d-flex justify-content-between align-items-center bg-light rounded">
+                        <span id="passengerLoadLabel" class="info-label fw-medium text-secondary">Passenger Load:</span>
+                        <span class="info-value fw-semibold text-primary">70%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+            <div class="card p-4 fade-in">
+                <h2 id="driverManagementTitle" class="card-title-custom">Driver Management</h2>
+                <p id="driverManagementDesc" class="card-description mb-4">Add or remove drivers from the fleet roster.</p>
+                
+                <div class="mb-3">
+                    <input type="text" id="driverNameInput" class="form-control" placeholder="Driver Name (e.g., John Doe)">
+                </div>
+                <div class="mb-3">
+                    <input type="text" id="driverIdInput" class="form-control" placeholder="Driver ID (e.g., D-123)">
+                </div>
+                <div class="mb-4">
+                    <button id="addDriverBtn" class="btn btn-secondary w-100 py-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Add New Driver
+                    </button>
+                </div>
+
+                <hr class="divider my-4">
+
+                <h3 id="currentDriversTitle" class="card-title-custom">Current Drivers</h3>
+                <div id="driverList" class="d-grid gap-3">
+                    </div>
+            </div>
+
+            <div class="card p-4 fade-in">
+                <h2 id="scheduleManagementTitle" class="card-title-custom">Schedule Management</h2>
+                <p id="scheduleManagementDesc" class="card-description mb-4">Get AI-powered route suggestions for traffic areas.</p>
+                
+                <div class="mb-3">
+                    <select id="trafficAreaSelect" class="form-select">
+                        <option value="">Select Traffic Area</option>
+                        <option value="Downtown">Downtown Junction</option>
+                        <option value="Highway">Expressway 9</option>
+                        <option value="CityCenter">Central Avenue</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <button id="suggestRouteBtn" class="btn btn-primary w-100 py-3">Suggest Optimal Route</button>
+                </div>
+                
+                <div id="routeSuggestion" class="alert alert-success d-none">
+                    </div>
+
+                <hr class="divider my-4">
+                
+                <h3 id="addRouteTitle" class="card-title-custom">Add New Route</h3>
+                <p id="addRouteDesc" class="card-description mb-4">Define a new route by adding a name and a series of stops.</p>
+                
+                <div class="mb-3">
+                    <input type="text" id="routeNameInput" class="form-control" placeholder="Route Name (e.g., Route 10)">
+                </div>
+                
+                <div id="stops-container" class="mb-3">
+                    <div class="mb-3">
+                        <input type="text" class="stop-input form-control" placeholder="Stop 1">
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <button id="addStopBtn" class="btn btn-outline-custom w-100 py-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Add Stop
+                    </button>
+                </div>
+
+                <div class="mb-4">
+                    <button id="addRouteBtn" class="btn btn-secondary w-100 py-3">Save New Route</button>
+                </div>
+
+                <hr class="divider my-4">
+
+                <h3 id="currentRoutesTitle" class="card-title-custom">Current Routes</h3>
+                <div id="routesList" class="d-grid gap-3 mb-4">
+                    </div>
+
+                <hr class="divider my-4">
+                
+                <h3 id="generateQRTitle" class="card-title-custom">Generate Route QR Code</h3>
+                <p id="generateQRDesc" class="card-description mb-4">Select a route to generate a QR code for easy sharing.</p>
+                
+                <div class="mb-3">
+                    <select id="routeSelect" class="form-select">
+                        <option value="">Select a Route</option>
+                    </select>
+                </div>
+                <div class="mb-4">
+                    <button id="generateRouteQRBtn" class="btn btn-primary w-100 py-3">Generate QR Code</button>
+                </div>
+
+                <div id="route-qrcode" class="qr-container text-center">
+                    <p id="routeQRMessage" class="qr-message">Select a route and click 'Generate'.</p>
+                </div>
+            </div>
+
+            <div class="card p-4 fade-in">
+                <h2 id="analyticsTitle" class="card-title-custom">Analytics Dashboard</h2>
+                <div class="stats-grid d-grid gap-3">
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="fleetSizeLabel" class="stat-label fw-medium text-secondary">Total Fleet Size:</span>
+                        <span class="stat-value fw-bold text-primary">250 buses</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="activeDriversLabel" class="stat-label fw-medium text-secondary">Active Drivers:</span>
+                        <span class="stat-value fw-bold text-primary">187</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="dailyTripsLabel" class="stat-label fw-medium text-secondary">Daily Trips:</span>
+                        <span class="stat-value fw-bold text-primary">~1,500</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="averageLoadLabel" class="stat-label fw-medium text-secondary">Average Load:</span>
+                        <span class="stat-value fw-bold text-success">72%</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="fuelConsumptionLabel" class="stat-label fw-medium text-secondary">Fuel Consumption:</span>
+                        <span class="stat-value fw-bold text-primary">1,200 gallons</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4 fade-in">
+                <h2 id="alertsTitle" class="card-title-custom">Alerts & Reports</h2>
+                
+                <h3 id="maintenanceTitle" class="card-title-custom">Maintenance Alerts</h3>
+                <div class="alert alert-warning d-flex align-items-center gap-3" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M8.257 3.099a.75.75 0 011.486 0l3.877 8.016a.75.75 0 01-.669 1.106H4.819a.75.75 0 01-.669-1.106l3.877-8.016zM10 5a.75.75 0 00-.75.75v3.5a.75.75 0 001.5 0v-3.5A.75.75 0 0010 5zm0 10a.75.75 0 100-1.5.75.75 0 000 1.5z" clip-rule="evenodd" />
+                    </svg>
+                    <span id="busAlertText">Bus B-125: Oil change due in 2 days.</span>
+                </div>
+
+                <h3 id="incidentTitle" class="card-title-custom mt-4">Incident Reports</h3>
+                <div class="alert alert-danger d-flex align-items-center gap-3" role="alert">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9 5a1 1 0 00-1 1v2a1 1 0 002 0V6a1 1 0 00-1-1zm1 8a1 1 0 100-2 1 1 0 000 2z" clip-rule="evenodd" />
+                    </svg>
+                    <span id="sosAlertText">SOS from Bus B-301: Driver needs support.</span>
+                </div>
+            </div>
+
+            <div class="card p-4 fade-in">
+                <h2 id="violationTitle" class="card-title-custom">Violation Monitoring</h2>
+                <div class="stats-grid d-grid gap-3">
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="overspeedingLabel" class="stat-label fw-medium text-secondary">Overspeeding:</span>
+                        <span class="stat-value fw-bold text-danger">Driver 752 (Bus B-214)</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="harshBrakingLabel" class="stat-label fw-medium text-secondary">Harsh Braking:</span>
+                        <span class="stat-value fw-bold text-primary">5 detected today</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="routeDeviationLabel" class="stat-label fw-medium text-secondary">Route Deviation:</span>
+                        <span class="stat-value fw-bold text-primary">2 alerts</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="flaggedDriversLabel" class="stat-label fw-medium text-secondary">Flagged Drivers:</span>
+                        <span class="stat-value fw-bold text-danger">Mark Smith (3+ violations)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card p-4 fade-in">
+                <h2 id="communicationTitle" class="card-title-custom">Communication Hub</h2>
+                <div class="mb-3">
+                    <textarea id="announcementTextarea" class="form-control" rows="4" placeholder="Send a message to all drivers or passengers..."></textarea>
+                </div>
+                <div class="mb-4">
+                    <button id="sendAnnouncementBtn" class="btn btn-primary w-100 py-3 d-flex align-items-center justify-content-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.925a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.896 28.896 0 003.105 2.289z" />
+                        </svg>
+                        Send Announcement
+                    </button>
+                </div>
+            </div>
+
+            <div class="card p-4 fade-in">
+                <h2 id="greenMetricsTitle" class="card-title-custom">Green Metrics</h2>
+                <div class="stats-grid d-grid gap-3 mb-4">
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="co2SavingsLabel" class="stat-label fw-medium text-secondary">CO₂ Savings:</span>
+                        <span class="stat-value fw-bold text-success">~2.5 tons/month</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="fuelEfficiencyLabel" class="stat-label fw-medium text-secondary">Fuel Efficiency:</span>
+                        <span class="stat-value fw-bold text-success">15% improvement</span>
+                    </div>
+                    <div class="stat-item p-3 d-flex justify-content-between align-items-center">
+                        <span id="eBusRecommendationLabel" class="stat-label fw-medium text-secondary">E-Bus Recommendation:</span>
+                        <span class="stat-value fw-bold text-primary">Route 5</span>
+                    </div>
+                </div>
+                <p id="greenMetricsDesc" class="card-description">Route 5 recommended for e-bus deployment due to high density and short distance characteristics.</p>
+            </div>
+        </div>
+    </main>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs@gh-pages/qrcode.min.js"></script>
+    <script>
+        const translations = {
+            en: {
+                panelTitle: "Municipal Panel",
+                welcomeText: "Welcome, Admin!",
+                logout: "Logout",
+                fleetMonitoringTitle: "Fleet Monitoring",
+                busIdLabel: "Bus ID:",
+                driverLabel: "Driver:",
+                passengerLoadLabel: "Passenger Load:",
+                driverManagementTitle: "Driver Management",
+                driverManagementDesc: "Add or remove drivers from the fleet roster.",
+                driverNamePlaceholder: "Driver Name (e.g., John Doe)",
+                driverIdPlaceholder: "Driver ID (e.g., D-123)",
+                addDriverBtn: "Add New Driver",
+                currentDriversTitle: "Current Drivers",
+                scheduleManagementTitle: "Schedule Management",
+                scheduleManagementDesc: "Get AI-powered route suggestions for traffic areas.",
+                trafficAreaSelectDefault: "Select Traffic Area",
+                trafficAreaOption1: "Downtown Junction",
+                trafficAreaOption2: "Expressway 9",
+                trafficAreaOption3: "Central Avenue",
+                suggestRouteBtn: "Suggest Optimal Route",
+                addRouteTitle: "Add New Route",
+                addRouteDesc: "Define a new route by adding a name and a series of stops.",
+                routeNamePlaceholder: "Route Name (e.g., Route 10)",
+                stopPlaceholder: "Stop",
+                addStopBtn: "Add Stop",
+                saveRouteBtn: "Save New Route",
+                currentRoutesTitle: "Current Routes",
+                generateQRTitle: "Generate Route QR Code",
+                generateQRDesc: "Select a route to generate a QR code for easy sharing.",
+                routeSelectDefault: "Select a Route",
+                generateQRBtn: "Generate QR Code",
+                routeQRMessage: "Select a route and click 'Generate'.",
+                analyticsTitle: "Analytics Dashboard",
+                fleetSizeLabel: "Total Fleet Size:",
+                activeDriversLabel: "Active Drivers:",
+                dailyTripsLabel: "Daily Trips:",
+                averageLoadLabel: "Average Load:",
+                fuelConsumptionLabel: "Fuel Consumption:",
+                alertsTitle: "Alerts & Reports",
+                maintenanceTitle: "Maintenance Alerts",
+                busAlertText: "Bus B-125: Oil change due in 2 days.",
+                incidentTitle: "Incident Reports",
+                sosAlertText: "SOS from Bus B-301: Driver needs support.",
+                violationTitle: "Violation Monitoring",
+                overspeedingLabel: "Overspeeding:",
+                harshBrakingLabel: "Harsh Braking:",
+                routeDeviationLabel: "Route Deviation:",
+                flaggedDriversLabel: "Flagged Drivers:",
+                communicationTitle: "Communication Hub",
+                announcementPlaceholder: "Send a message to all drivers or passengers...",
+                sendAnnouncementBtn: "Send Announcement",
+                greenMetricsTitle: "Green Metrics",
+                co2SavingsLabel: "CO₂ Savings:",
+                fuelEfficiencyLabel: "Fuel Efficiency:",
+                eBusRecommendationLabel: "E-Bus Recommendation:",
+                greenMetricsDesc: "Route 5 recommended for e-bus deployment due to high density and short distance characteristics."
+            },
+            hi: {
+                panelTitle: "नगर निगम पैनल",
+                welcomeText: "आपका स्वागत है, व्यवस्थापक!",
+                logout: "लॉगआउट",
+                fleetMonitoringTitle: "बेड़ा निगरानी",
+                busIdLabel: "बस आईडी:",
+                driverLabel: "ड्राइवर:",
+                passengerLoadLabel: "यात्री भार:",
+                driverManagementTitle: "ड्राइवर प्रबंधन",
+                driverManagementDesc: "बेड़े के रोस्टर में ड्राइवरों को जोड़ें या हटाएँ।",
+                driverNamePlaceholder: "ड्राइवर का नाम (उदा. जॉन डो)",
+                driverIdPlaceholder: "ड्राइवर आईडी (उदा. D-123)",
+                addDriverBtn: "नया ड्राइवर जोड़ें",
+                currentDriversTitle: "वर्तमान ड्राइवर",
+                scheduleManagementTitle: "शेड्यूल प्रबंधन",
+                scheduleManagementDesc: "यातायात वाले क्षेत्रों के लिए एआई-संचालित मार्ग सुझाव प्राप्त करें।",
+                trafficAreaSelectDefault: "यातायात क्षेत्र चुनें",
+                trafficAreaOption1: "डाउनटाउन जंक्शन",
+                trafficAreaOption2: "एक्सप्रेसवे 9",
+                trafficAreaOption3: "सेंट्रल एवेन्यू",
+                suggestRouteBtn: "इष्टतम मार्ग सुझाएं",
+                addRouteTitle: "नया मार्ग जोड़ें",
+                addRouteDesc: "नाम और स्टॉप की एक श्रृंखला जोड़कर एक नया मार्ग परिभाषित करें।",
+                routeNamePlaceholder: "मार्ग का नाम (उदा. मार्ग 10)",
+                stopPlaceholder: "स्टॉप",
+                addStopBtn: "स्टॉप जोड़ें",
+                saveRouteBtn: "नया मार्ग सहेजें",
+                currentRoutesTitle: "वर्तमान मार्ग",
+                generateQRTitle: "मार्ग QR कोड जनरेट करें",
+                generateQRDesc: "आसान साझाकरण के लिए QR कोड जनरेट करने हेतु एक मार्ग चुनें।",
+                routeSelectDefault: "एक मार्ग चुनें",
+                generateQRBtn: "QR कोड जनरेट करें",
+                routeQRMessage: "एक मार्ग चुनें और 'जनरेट' पर क्लिक करें।",
+                analyticsTitle: "एनालिटिक्स डैशबोर्ड",
+                fleetSizeLabel: "कुल बेड़े का आकार:",
+                activeDriversLabel: "सक्रिय ड्राइवर:",
+                dailyTripsLabel: "दैनिक यात्राएँ:",
+                averageLoadLabel: "औसत भार:",
+                fuelConsumptionLabel: "ईंधन की खपत:",
+                alertsTitle: "अलर्ट और रिपोर्ट",
+                maintenanceTitle: "रखरखाव अलर्ट",
+                busAlertText: "बस B-125: 2 दिनों में तेल बदलने की आवश्यकता है।",
+                incidentTitle: "घटना रिपोर्ट",
+                sosAlertText: "बस B-301 से SOS: ड्राइवर को सहायता की आवश्यकता है।",
+                violationTitle: "उल्लंघन निगरानी",
+                overspeedingLabel: "ओवरस्पीडिंग:",
+                harshBrakingLabel: "जोरदार ब्रेक लगाना:",
+                routeDeviationLabel: "मार्ग विचलन:",
+                flaggedDriversLabel: "चिह्नित ड्राइवर:",
+                communicationTitle: "संचार केंद्र",
+                announcementPlaceholder: "सभी ड्राइवरों या यात्रियों को एक संदेश भेजें...",
+                sendAnnouncementBtn: "घोषणा भेजें",
+                greenMetricsTitle: "हरित मेट्रिक्स",
+                co2SavingsLabel: "CO₂ बचत:",
+                fuelEfficiencyLabel: "ईंधन दक्षता:",
+                eBusRecommendationLabel: "ई-बस की सिफारिश:",
+                greenMetricsDesc: "उच्च घनत्व और कम दूरी की विशेषताओं के कारण ई-बस परिनियोजन के लिए मार्ग 5 की सिफारिश की गई है।"
+            }
+        };
+
+        function applyLanguage(lang) {
+            const t = translations[lang];
+
+            // Header
+            document.getElementById('panelTitle').textContent = t.panelTitle;
+            document.getElementById('welcomeText').textContent = t.welcomeText;
+            const logoutBtn = document.querySelector('.logout-btn');
+            if (logoutBtn) {
+                const textNode = Array.from(logoutBtn.childNodes).find(node => node.nodeType === 3);
+                if (textNode) {
+                    textNode.nodeValue = ` ${t.logout}`;
+                }
+            }
+            
+            // Fleet Monitoring
+            document.getElementById('fleetMonitoringTitle').textContent = t.fleetMonitoringTitle;
+            document.getElementById('busIdLabel').textContent = t.busIdLabel;
+            document.getElementById('driverLabel').textContent = t.driverLabel;
+            document.getElementById('passengerLoadLabel').textContent = t.passengerLoadLabel;
+
+            // Driver Management
+            document.getElementById('driverManagementTitle').textContent = t.driverManagementTitle;
+            document.getElementById('driverManagementDesc').textContent = t.driverManagementDesc;
+            document.getElementById('driverNameInput').placeholder = t.driverNamePlaceholder;
+            document.getElementById('driverIdInput').placeholder = t.driverIdPlaceholder;
+            document.getElementById('addDriverBtn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg> ${t.addDriverBtn}`;
+            document.getElementById('currentDriversTitle').textContent = t.currentDriversTitle;
+
+            // Schedule Management
+            document.getElementById('scheduleManagementTitle').textContent = t.scheduleManagementTitle;
+            document.getElementById('scheduleManagementDesc').textContent = t.scheduleManagementDesc;
+            document.getElementById('trafficAreaSelect').options[0].textContent = t.trafficAreaSelectDefault;
+            document.getElementById('trafficAreaSelect').options[1].textContent = t.trafficAreaOption1;
+            document.getElementById('trafficAreaSelect').options[2].textContent = t.trafficAreaOption2;
+            document.getElementById('trafficAreaSelect').options[3].textContent = t.trafficAreaOption3;
+            document.getElementById('suggestRouteBtn').textContent = t.suggestRouteBtn;
+            document.getElementById('addRouteTitle').textContent = t.addRouteTitle;
+            document.getElementById('addRouteDesc').textContent = t.addRouteDesc;
+            document.getElementById('routeNameInput').placeholder = t.routeNamePlaceholder;
+            
+            // Stops
+            const stopInputs = document.querySelectorAll('.stop-input');
+            stopInputs.forEach((input, index) => {
+                input.placeholder = `${t.stopPlaceholder} ${index + 1}`;
+            });
+            document.getElementById('addStopBtn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg> ${t.addStopBtn}`;
+            document.getElementById('addRouteBtn').textContent = t.saveRouteBtn;
+            document.getElementById('currentRoutesTitle').textContent = t.currentRoutesTitle;
+            document.getElementById('generateQRTitle').textContent = t.generateQRTitle;
+            document.getElementById('generateQRDesc').textContent = t.generateQRDesc;
+            document.getElementById('routeSelect').options[0].textContent = t.routeSelectDefault;
+            document.getElementById('generateRouteQRBtn').textContent = t.generateQRBtn;
+            document.getElementById('routeQRMessage').textContent = t.routeQRMessage;
+
+            // Analytics
+            document.getElementById('analyticsTitle').textContent = t.analyticsTitle;
+            document.getElementById('fleetSizeLabel').textContent = t.fleetSizeLabel;
+            document.getElementById('activeDriversLabel').textContent = t.activeDriversLabel;
+            document.getElementById('dailyTripsLabel').textContent = t.dailyTripsLabel;
+            document.getElementById('averageLoadLabel').textContent = t.averageLoadLabel;
+            document.getElementById('fuelConsumptionLabel').textContent = t.fuelConsumptionLabel;
+
+            // Alerts
+            document.getElementById('alertsTitle').textContent = t.alertsTitle;
+            document.getElementById('maintenanceTitle').textContent = t.maintenanceTitle;
+            document.getElementById('busAlertText').textContent = t.busAlertText;
+            document.getElementById('incidentTitle').textContent = t.incidentTitle;
+            document.getElementById('sosAlertText').textContent = t.sosAlertText;
+
+            // Violation Monitoring
+            document.getElementById('violationTitle').textContent = t.violationTitle;
+            document.getElementById('overspeedingLabel').textContent = t.overspeedingLabel;
+            document.getElementById('harshBrakingLabel').textContent = t.harshBrakingLabel;
+            document.getElementById('routeDeviationLabel').textContent = t.routeDeviationLabel;
+            document.getElementById('flaggedDriversLabel').textContent = t.flaggedDriversLabel;
+
+            // Communication Hub
+            document.getElementById('communicationTitle').textContent = t.communicationTitle;
+            document.getElementById('announcementTextarea').placeholder = t.announcementPlaceholder;
+            document.getElementById('sendAnnouncementBtn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.925a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.896 28.896 0 003.105 2.289z" /></svg> ${t.sendAnnouncementBtn}`;
+
+            // Green Metrics
+            document.getElementById('greenMetricsTitle').textContent = t.greenMetricsTitle;
+            document.getElementById('co2SavingsLabel').textContent = t.co2SavingsLabel;
+            document.getElementById('fuelEfficiencyLabel').textContent = t.fuelEfficiencyLabel;
+            document.getElementById('eBusRecommendationLabel').textContent = t.eBusRecommendationLabel;
+            document.getElementById('greenMetricsDesc').textContent = t.greenMetricsDesc;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const languageSelect = document.getElementById('languageSelect');
+            const themeToggle = document.getElementById('theme-toggle');
+            const sunIcon = document.getElementById('sun-icon');
+            const moonIcon = document.getElementById('moon-icon');
+            const body = document.body;
+
+            // Language setup
+            const defaultLang = localStorage.getItem('lang') || 'en';
+            languageSelect.value = defaultLang;
+            applyLanguage(defaultLang);
+            languageSelect.addEventListener('change', (event) => {
+                const selectedLang = event.target.value;
+                localStorage.setItem('lang', selectedLang);
+                applyLanguage(selectedLang);
+                renderRouteDropdown();
+                updatePlaceholderTexts();
+            });
+
+            // Theme setup
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            const initialTheme = savedTheme === 'auto' ? (prefersDark ? 'dark' : 'light') : savedTheme;
+
+            function setTheme(theme) {
+                body.setAttribute('data-bs-theme', theme);
+                if (theme === 'dark') {
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                } else {
+                    moonIcon.classList.add('hidden');
+                    sunIcon.classList.remove('hidden');
+                }
+                localStorage.setItem('theme', theme);
+            }
+
+            setTheme(initialTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = body.getAttribute('data-bs-theme');
+                setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            });
+
+            // Fleet Monitoring Map
+            const map = L.map('map', {
+                zoomControl: true,
+                attributionControl: false
+            }).setView([23.2599, 77.4126], 13);
+
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '©️ OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Custom bus icon
+            const busIcon = L.divIcon({
+                html: `<div style="background: linear-gradient(135deg, #6366f1, #10b981); color: white; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.2); border: 3px solid white;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4 6h16v10H4V6zm2 2v6h12V8H6zm-2 8h16v2H4v-2z"/>
+                    </svg>
+                </div>`,
+                className: 'custom-bus-icon',
+                iconSize: [32, 32],
+                iconAnchor: [16, 32]
+            });
+
+            L.marker([23.25, 77.4], {icon: busIcon}).addTo(map)
+                .bindPopup('<div class="text-center"><strong>Bus B-214</strong><br>Route 7<br><small>Driver: Jane Doe</small></div>')
+                .openPopup();
+
+            // AI Route Suggestion
+            const trafficAreaSelect = document.getElementById('trafficAreaSelect');
+            const suggestRouteBtn = document.getElementById('suggestRouteBtn');
+            const routeSuggestion = document.getElementById('routeSuggestion');
+
+            const suggestions = {
+                'Downtown': 'Bypass via Elm Street (avoids high traffic at Main & 5th). Estimated time savings: 15 minutes.',
+                'Highway': 'Use local roads 7A and 7B (avoids accident on Expressway 9). Estimated time savings: 25 minutes.',
+                'CityCenter': 'Use North and South bypasses during peak hours. Estimated time savings: 10 minutes.'
+            };
+
+            suggestRouteBtn.addEventListener('click', () => {
+                const selectedArea = trafficAreaSelect.value;
+                
+                if (!selectedArea) {
+                    routeSuggestion.classList.add('d-none');
+                    return;
+                }
+
+                suggestRouteBtn.classList.add('loading');
+                
+                setTimeout(() => {
+                    routeSuggestion.textContent = suggestions[selectedArea];
+                    routeSuggestion.classList.remove('d-none');
+                    routeSuggestion.classList.add('slide-in');
+                    suggestRouteBtn.classList.remove('loading');
+                }, 800);
+            });
+
+            // Driver Management
+            const driverNameInput = document.getElementById('driverNameInput');
+            const driverIdInput = document.getElementById('driverIdInput');
+            const addDriverBtn = document.getElementById('addDriverBtn');
+            const driverList = document.getElementById('driverList');
+
+            let drivers = [
+                { id: 'D-123', name: 'John Doe', status: 'Active' },
+                { id: 'D-456', name: 'Jane Smith', status: 'On Route' },
+                { id: 'D-789', name: 'Mike Johnson', status: 'Off Duty' }
+            ];
+
+            function renderDrivers() {
+                driverList.innerHTML = '';
+                
+                if (drivers.length === 0) {
+                    driverList.innerHTML = '<p class="qr-message text-center">No drivers added yet.</p>';
+                    return;
+                }
+
+                drivers.forEach((driver, index) => {
+                    const driverItem = document.createElement('div');
+                    driverItem.className = 'list-item p-3 d-flex justify-content-between align-items-center slide-in';
+                    driverItem.style.animationDelay = `${index * 0.1}s`;
+                    
+                    driverItem.innerHTML = `
+                        <div>
+                            <div class="fw-semibold text-primary">${driver.name}</div>
+                            <small class="text-secondary">ID: ${driver.id} • Status: ${driver.status}</small>
+                        </div>
+                        <div>
+                            <button class="btn btn-sm text-danger delete-driver-btn" data-id="${driver.id}" title="Remove Driver">
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm4 0a1 1 0 112 0v6a1 1 0 11-2 0V8z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+                        </div>
+                    `;
+                    
+                    driverList.appendChild(driverItem);
+                });
+            }
+
+            addDriverBtn.addEventListener('click', () => {
+                const name = driverNameInput.value.trim();
+                const id = driverIdInput.value.trim();
+
+                if (name && id) {
+                    if (drivers.some(driver => driver.id === id)) {
+                        alert('Driver ID already exists!');
+                        return;
+                    }
+
+                    drivers.push({ id, name, status: 'Available' });
+                    driverNameInput.value = '';
+                    driverIdInput.value = '';
+                    renderDrivers();
+                    
+                    addDriverBtn.textContent = 'Driver Added!';
+                    addDriverBtn.classList.add('btn-success');
+                    setTimeout(() => {
+                        const currentLang = document.getElementById('languageSelect').value;
+                        const t = translations[currentLang];
+                        addDriverBtn.innerHTML = `
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                            </svg>
+                            ${t.addDriverBtn}
+                        `;
+                        addDriverBtn.classList.remove('btn-success');
+                    }, 2000);
+                }
+            });
+
+            driverList.addEventListener('click', (e) => {
+                const deleteBtn = e.target.closest('.delete-driver-btn');
+                if (deleteBtn) {
+                    const idToDelete = deleteBtn.dataset.id;
+                    const driverToDelete = drivers.find(driver => driver.id === idToDelete);
+                    
+                    if (confirm(`Are you sure you want to remove ${driverToDelete.name}?`)) {
+                        drivers = drivers.filter(driver => driver.id !== idToDelete);
+                        renderDrivers();
+                    }
+                }
+            });
+
+            // Route Management
+            const addStopBtn = document.getElementById('addStopBtn');
+            const stopsContainer = document.getElementById('stops-container');
+            const addRouteBtn = document.getElementById('addRouteBtn');
+            const routeNameInput = document.getElementById('routeNameInput');
+            const routesList = document.getElementById('routesList');
+            const routeSelect = document.getElementById('routeSelect');
+            const generateRouteQRBtn = document.getElementById('generateRouteQRBtn');
+            const routeQrcodeContainer = document.getElementById('route-qrcode');
+            const routeQRMessage = document.getElementById('routeQRMessage');
+
+            let routes = [
+                { name: 'Route 10', stops: ['Central Station', 'Mall Plaza', 'University Campus', 'Hospital'] },
+                { name: 'Route 15', stops: ['Airport', 'Downtown', 'Business District'] }
+            ];
+
+            let routeQrcode = null;
+
+            function renderRoutes() {
+                routesList.innerHTML = '';
+                
+                if (routes.length === 0) {
+                    routesList.innerHTML = '<p class="qr-message text-center">No routes defined yet.</p>';
+                    return;
+                }
+
+                routes.forEach((route, index) => {
+                    const routeItem = document.createElement('div');
+                    routeItem.className = 'list-item p-3 slide-in';
+                    routeItem.style.animationDelay = `${index * 0.1}s`;
+                    
+                    routeItem.innerHTML = `
+                        <div>
+                            <div class="fw-semibold text-primary">${route.name}</div>
+                            <small class="text-secondary">${route.stops.length} stops: ${route.stops.join(' → ')}</small>
+                        </div>
+                    `;
+                    
+                    routesList.appendChild(routeItem);
+                });
+            }
+
+            function renderRouteDropdown() {
+                const currentLang = document.getElementById('languageSelect').value;
+                routeSelect.innerHTML = `<option value="">${translations[currentLang].routeSelectDefault}</option>`;
+                routes.forEach(route => {
+                    const option = document.createElement('option');
+                    option.value = route.name;
+                    option.textContent = `${route.name} (${route.stops.length} stops)`;
+                    routeSelect.appendChild(option);
+                });
+            }
+
+            function updatePlaceholderTexts() {
+                const currentLang = document.getElementById('languageSelect').value;
+                const t = translations[currentLang];
+                
+                document.getElementById('driverNameInput').placeholder = t.driverNamePlaceholder;
+                document.getElementById('driverIdInput').placeholder = t.driverIdPlaceholder;
+                document.getElementById('routeNameInput').placeholder = t.routeNamePlaceholder;
+                document.getElementById('announcementTextarea').placeholder = t.announcementPlaceholder;
+                
+                const stopInputs = document.querySelectorAll('.stop-input');
+                stopInputs.forEach((input, index) => {
+                    input.placeholder = `${t.stopPlaceholder} ${index + 1}`;
+                });
+            }
+            
+            addStopBtn.addEventListener('click', () => {
+                const stopCount = stopsContainer.querySelectorAll('.stop-input').length + 1;
+                const newStopGroup = document.createElement('div');
+                newStopGroup.className = 'input-group mb-3 slide-in';
+                
+                const currentLang = document.getElementById('languageSelect').value;
+                const t = translations[currentLang];
+                
+                newStopGroup.innerHTML = `
+                    <input type="text" class="stop-input form-control" placeholder="${t.stopPlaceholder} ${stopCount}">
+                    <button type="button" class="btn btn-outline-danger remove-stop-btn">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                `;
+                
+                stopsContainer.appendChild(newStopGroup);
+            });
+
+            stopsContainer.addEventListener('click', (e) => {
+                const removeBtn = e.target.closest('.remove-stop-btn');
+                if (removeBtn) {
+                    const stopGroups = stopsContainer.querySelectorAll('.input-group');
+                    if (stopGroups.length > 1) {
+                        removeBtn.closest('.input-group').remove();
+                    }
+                }
+            });
+
+            addRouteBtn.addEventListener('click', () => {
+                const routeName = routeNameInput.value.trim();
+                const stops = Array.from(stopsContainer.querySelectorAll('.stop-input'))
+                    .map(input => input.value.trim())
+                    .filter(value => value !== '');
+
+                if (!routeName) {
+                    alert('Please enter a route name.');
+                    return;
+                }
+
+                if (stops.length < 2) {
+                    alert('Please add at least 2 stops.');
+                    return;
+                }
+
+                if (routes.some(route => route.name === routeName)) {
+                    alert('Route name already exists!');
+                    return;
+                }
+
+                routes.push({ name: routeName, stops: stops });
+                
+                // Reset form
+                routeNameInput.value = '';
+                const currentLang = document.getElementById('languageSelect').value;
+                const t = translations[currentLang];
+                stopsContainer.innerHTML = `
+                    <div class="mb-3">
+                        <input type="text" class="stop-input form-control" placeholder="${t.stopPlaceholder} 1">
+                    </div>
+                `;
+                
+                renderRoutes();
+                renderRouteDropdown();
+                
+                // Show success feedback
+                addRouteBtn.textContent = 'Route Added!';
+                addRouteBtn.classList.add('btn-success');
+                setTimeout(() => {
+                    addRouteBtn.textContent = t.saveRouteBtn;
+                    addRouteBtn.classList.remove('btn-success');
+                }, 2000);
+            });
+
+            // QR Code Generation
+            generateRouteQRBtn.addEventListener('click', () => {
+                const selectedRouteName = routeSelect.value;
+                
+                const currentLang = document.getElementById('languageSelect').value;
+                const t = translations[currentLang];
+                
+                if (!selectedRouteName) {
+                    routeQRMessage.textContent = t.routeQRMessage;
+                    return;
+                }
+
+                const route = routes.find(r => r.name === selectedRouteName);
+                if (!route) {
+                    routeQRMessage.textContent = 'Route not found.';
+                    return;
+                }
+
+                if (routeQrcode) {
+                    routeQrcodeContainer.innerHTML = `<p class="qr-message" id="routeQRMessage">${t.routeQRMessage}</p>`;
+                    routeQrcode = null;
+                }
+
+                generateRouteQRBtn.classList.add('loading');
+                routeQRMessage.textContent = 'Generating QR code...';
+
+                setTimeout(() => {
+                    try {
+                        const qrData = JSON.stringify({
+                            route: route.name,
+                            stops: route.stops,
+                            generated: new Date().toISOString()
+                        });
+
+                        const qrContainer = document.createElement('div');
+                        qrContainer.style.marginBottom = '1rem';
+                        routeQrcodeContainer.innerHTML = '';
+                        routeQrcodeContainer.appendChild(qrContainer);
+
+                        if (typeof QRCode !== 'undefined') {
+                            routeQrcode = new QRCode(qrContainer, {
+                                text: qrData,
+                                width: 200,
+                                height: 200,
+                                colorDark: body.getAttribute('data-bs-theme') === 'dark' ? '#f1f5f9' : '#1e293b',
+                                colorLight: body.getAttribute('data-bs-theme') === 'dark' ? '#1e293b' : '#ffffff',
+                                correctLevel: QRCode.CorrectLevel.H
+                            });
+
+                            const messageEl = document.createElement('p');
+                            messageEl.className = 'qr-message';
+                            messageEl.textContent = `QR code for ${route.name} generated successfully!`;
+                            routeQrcodeContainer.appendChild(messageEl);
+                        } else {
+                            qrContainer.innerHTML = `
+                                <div style="width: 200px; height: 200px; background: var(--bg-secondary); border: 2px dashed var(--border-color); display: flex; align-items: center; justify-content: center; border-radius: var(--border-radius);">
+                                    <div class="text-center text-secondary">
+                                        <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor" style="opacity: 0.5;">
+                                            <path d="M3,11H5V13H3V11M11,5H13V9H11V5M9,11H13V15H9V11M15,11H17V13H15V11M19,11H21V13H19V11M12,2L13.09,8.26L22,9L13.09,9.74L12,16L10.91,9.74L2,9L10.91,8.26L12,2M3,5H5V7H3V5M5,3H7V5H5V3M5,7H7V9H5V7M3,9H5V11H3V9M19,3H21V5H19V3M17,5H19V7H17V5M19,7H21V9H19V7Z"/>
+                                        </svg>
+                                        <p class="fs-6 mt-2">QR Code Preview</p>
+                                        <p class="text-sm mt-1">${route.name}</p>
+                                    </div>
+                                </div>
+                            `;
+                            
+                            const messageEl = document.createElement('p');
+                            messageEl.className = 'qr-message';
+                            messageEl.textContent = `QR code data generated for ${route.name}`;
+                            routeQrcodeContainer.appendChild(messageEl);
+                        }
+
+                        generateRouteQRBtn.classList.remove('loading');
+                    } catch (error) {
+                        console.error('Error generating QR code:', error);
+                        routeQrcodeContainer.innerHTML = `
+                            <p class="qr-message text-danger">
+                                Error generating QR code. Please try again.
+                            </p>
+                        `;
+                        generateRouteQRBtn.classList.remove('loading');
+                    }
+                }, 1000);
+            });
+
+            // Initialize all components
+            renderDrivers();
+            renderRoutes();
+            renderRouteDropdown();
+            
+            // Apply fade-in animation
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = 'ALoginPage.html';
+        }
+    </script>
+</body>
+</html>
