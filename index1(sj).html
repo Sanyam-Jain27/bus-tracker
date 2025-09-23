@@ -881,7 +881,7 @@
             const username = localStorage.getItem('loggedInUser');
             if (role !== 'user') {
                 alert('Please login as User');
-                window.location.href = 'ALoginPage.html';
+                window.location.href = 'index.html';
             }
         });
         document.getElementById('languageSelect').addEventListener('change', (event) => {
@@ -990,7 +990,7 @@
 
         function logout() {
             localStorage.clear();
-            window.location.href = 'ALoginPage.html';
+            window.location.href = 'index.html';
         }
 
         // Voice-to-Text Feature
