@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "../../sih practice"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"liveServer.settings.multiRootWorkspaceName": "sihproject copy"
+	}
+}
