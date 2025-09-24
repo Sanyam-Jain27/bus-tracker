@@ -251,14 +251,15 @@
       <div class="d-flex align-items-center gap-2">
         <select id="languageSelect" class="form-select form-select-sm w-auto">
           <option value="en">English</option>
-          <option value="hi">हिन्दी</option>
+          <option value="hi">हिंदी</option>
+          <option value="pa">ਪੰਜਾਬੀ</option>
         </select>
         <button id="theme-toggle" class="theme-toggle">
             <i id="sun-icon" class="bi bi-sun-fill"></i>
             <i id="moon-icon" class="bi bi-moon-fill hidden"></i>
         </button>
-        <button onclick="logout()" class="btn btn-outline-primary btn-sm"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
-        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-exclamation-octagon-fill me-1"></i> SOS</button>
+        <button id="logoutBtn" onclick="logout()" class="btn btn-outline-primary btn-sm"><i class="bi bi-box-arrow-right me-1"></i> Logout</button>
+        <button id="sosBtn" onclick="sosalert()" class="btn btn-outline-danger btn-sm ms-2"><i class="bi bi-exclamation-octagon-fill"></i> SOS</button>
       </div>
     </div>
   </header>
@@ -319,6 +320,17 @@
         feedbackPlaceholder: "Enter feedback",
         sendFeedback: "Send Feedback",
         scanResultDefault: "No route scanned yet.",
+        scannerError: "QR Scanner error: ",
+        gpsPermissionDenied: "Permission denied for GPS access",
+        gpsPositionUnavailable: "Position unavailable",
+        gpsTimeout: "GPS request timed out",
+        gpsUnknownError: "Unknown GPS error",
+        gpsStopped: "GPS stopped",
+        feedbackEnter: "Enter feedback",
+        feedbackSaved: "Feedback saved locally (demo).",
+        startScanner: "Start Scanner",
+        stopScanner: "Stop Scanner",
+        scannerStopped: "Scanner stopped.",
         logoutBtn: "Logout",
         sosBtn: "SOS"
       },
@@ -336,17 +348,55 @@
         feedbackPlaceholder: "फीडबैक दर्ज करें",
         sendFeedback: "फीडबैक भेजें",
         scanResultDefault: "अभी तक कोई रूट स्कैन नहीं किया गया।",
+        scannerError: "QR स्कैनर त्रुटि: ",
+        gpsPermissionDenied: "जीपीएस पहुंच के लिए अनुमति अस्वीकृत",
+        gpsPositionUnavailable: "स्थान अनुपलब्ध",
+        gpsTimeout: "जीपीएस अनुरोध का समय समाप्त हो गया",
+        gpsUnknownError: "अज्ञात जीपीएस त्रुटि",
+        gpsStopped: "जीपीएस बंद हो गया",
+        feedbackEnter: "फीडबैक दर्ज करें",
+        feedbackSaved: "फीडबैक स्थानीय रूप से सहेजा गया (डेमो)।",
+        startScanner: "स्कैनर शुरू करें",
+        stopScanner: "स्कैनर बंद करें",
+        scannerStopped: "स्कैनर बंद हो गया।",
         logoutBtn: "लॉगआउट",
         sosBtn: "एसओएस"
+      },
+      pa: {
+        headerTitle: "ਡਰਾਈਵਰ ਪੋਰਟਲ",
+        qrTitle: "ਰੂਟ QR ਸਕੈਨ ਕਰੋ",
+        timelineTitle: "ਬੱਸ ਰੂਟ ਟਾਈਮਲਾਈਨ",
+        startStop: "ਸ਼ੁਰੂ",
+        stop1: "ਸਟਾਪ 1",
+        stop2: "ਸਟਾਪ 2",
+        endStop: "ਅੰਤ",
+        enableGps: "ਜੀਪੀਐਸ ਚਾਲੂ/ਬੰਦ ਕਰੋ",
+        gpsMessage: "ਅਜੇ ਕੋਈ ਜੀਪੀਐਸ ਗਤੀਵਿਧੀ ਨਹੀਂ।",
+        feedbackTitle: "ਫੀਡਬੈਕ",
+        feedbackPlaceholder: "ਫੀਡਬੈਕ ਦਾਖਲ ਕਰੋ",
+        sendFeedback: "ਫੀਡਬੈਕ ਭੇਜੋ",
+        scanResultDefault: "ਅਜੇ ਕੋਈ ਰੂਟ ਸਕੈਨ ਨਹੀਂ ਕੀਤਾ ਗਿਆ।",
+        scannerError: "QR ਸਕੈਨਰ ਤਰੁੱਟੀ: ",
+        gpsPermissionDenied: "ਜੀਪੀਐਸ ਪਹੁੰਚ ਲਈ ਇਜਾਜ਼ਤ ਰੱਦ ਕੀਤੀ ਗਈ",
+        gpsPositionUnavailable: "ਸਥਾਨ ਉਪਲਬਧ ਨਹੀਂ",
+        gpsTimeout: "ਜੀਪੀਐਸ ਬੇਨਤੀ ਦਾ ਸਮਾਂ ਸਮਾਪਤ ਹੋ ਗਿਆ",
+        gpsUnknownError: "ਅਣਜਾਣ ਜੀਪੀਐਸ ਤਰੁੱਟੀ",
+        gpsStopped: "ਜੀਪੀਐਸ ਬੰਦ ਹੋ ਗਿਆ",
+        feedbackEnter: "ਫੀਡਬੈਕ ਦਾਖਲ ਕਰੋ",
+        feedbackSaved: "ਫੀਡਬੈਕ ਸਥਾਨਕ ਤੌਰ 'ਤੇ ਸੁਰੱਖਿਅਤ ਕੀਤਾ ਗਿਆ (ਡੈਮੋ)।",
+        startScanner: "ਸਕੈਨਰ ਸ਼ੁਰੂ ਕਰੋ",
+        stopScanner: "ਸਕੈਨਰ ਬੰਦ ਕਰੋ",
+        scannerStopped: "ਸਕੈਨਰ ਬੰਦ ਹੋ ਗਿਆ।",
+        logoutBtn: "ਲੌਗਆਉਟ",
+        sosBtn: "SOS"
       }
     };
 
     const languageSelect = document.getElementById('languageSelect');
-    languageSelect.addEventListener('change', () => updateLanguage(languageSelect.value));
 
-    function updateLanguage(lang){
+    function updateLanguage(lang) {
       const t = translations[lang];
-      if(!t) return;
+      if (!t) return;
       document.getElementById('headerTitle').textContent = t.headerTitle;
       document.getElementById('qrTitle').textContent = t.qrTitle;
       document.getElementById('timelineTitle').textContent = t.timelineTitle;
@@ -359,12 +409,24 @@
       document.getElementById('feedbackTitle').textContent = t.feedbackTitle;
       document.getElementById('feedbackText').placeholder = t.feedbackPlaceholder;
       document.getElementById('sendFeedback').textContent = t.sendFeedback;
-      document.querySelector('button.btn-outline-primary').innerHTML = `<i class="bi bi-box-arrow-right me-1"></i> ${t.logoutBtn}`;
-      document.querySelector('button.btn-outline-danger').innerHTML = `<i class="bi bi-exclamation-octagon-fill me-1"></i> ${t.sosBtn}`;
+
+      // Fix for buttons with icons
+      const logoutButton = document.getElementById('logoutBtn');
+      const logoutIcon = logoutButton.querySelector('i');
+      logoutButton.textContent = ' ' + t.logoutBtn;
+      logoutButton.prepend(logoutIcon);
+
+      const sosButton = document.getElementById('sosBtn');
+      const sosIcon = sosButton.querySelector('i');
+      sosButton.textContent = ' ' + t.sosBtn;
+      sosButton.prepend(sosIcon);
+      
+      const toggleScanBtn = document.getElementById('toggleScan');
+      const isScanning = toggleScanBtn.textContent.includes('Stop');
+      toggleScanBtn.textContent = isScanning ? t.stopScanner : t.startScanner;
+      
       const scanResult = document.getElementById('scanResult');
-      if([translations.en.scanResultDefault, translations.hi.scanResultDefault].includes(scanResult.textContent)){
-        scanResult.textContent = t.scanResultDefault;
-      }
+      scanResult.textContent = t.scanResultDefault;
     }
 
     // Theme Management
@@ -373,7 +435,6 @@
     const moonIcon = document.getElementById('moon-icon');
     const body = document.body;
 
-    // Initialize theme
     const savedTheme = localStorage.getItem('theme') || 'light';
     body.setAttribute('data-bs-theme', savedTheme);
     if (savedTheme === 'dark') {
@@ -400,72 +461,99 @@
     });
 
     // Set default language
-    updateLanguage('en');
+    const defaultLang = localStorage.getItem('lang') || 'en';
+    languageSelect.value = defaultLang;
+    updateLanguage(defaultLang);
+    languageSelect.addEventListener('change', () => {
+      const selectedLang = languageSelect.value;
+      localStorage.setItem('lang', selectedLang);
+      updateLanguage(selectedLang);
+    });
 
-    // --- Existing JS for QR, GPS, Feedback ---
+    // QR, GPS, and Feedback Functions
     let html5QrScanner = null;
     let scanning = false;
     let watchId = null;
 
-    document.getElementById('toggleScan').addEventListener('click',()=>{
-      const btn=document.getElementById('toggleScan');
-      if(!scanning){
-        html5QrScanner=new Html5Qrcode("qr-reader");
-        html5QrScanner.start({facingMode:"environment"},{fps:10,qrbox:250},(decodedText)=>{
-          document.getElementById('scanResult').textContent='Scanned: '+decodedText;
-        }).then(()=>{
-          scanning=true;
-          btn.textContent='Stop Scanner';
-        }).catch(err=>{
-          document.getElementById('scanResult').textContent='QR Scanner error: '+err;
+    document.getElementById('toggleScan').addEventListener('click', () => {
+      const btn = document.getElementById('toggleScan');
+      const scanResult = document.getElementById('scanResult');
+      const lang = languageSelect.value;
+      const t = translations[lang];
+
+      if (!scanning) {
+        html5QrScanner = new Html5Qrcode("qr-reader");
+        html5QrScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, (decodedText) => {
+          scanResult.textContent = 'Scanned: ' + decodedText;
+        }).then(() => {
+          scanning = true;
+          btn.textContent = t.stopScanner;
+        }).catch(err => {
+          scanResult.textContent = t.scannerError + err;
         });
       } else {
-        html5QrScanner.stop().then(()=>{
+        html5QrScanner.stop().then(() => {
           html5QrScanner.clear();
-          html5QrScanner=null;
-          scanning=false;
-          btn.textContent='Start Scanner';
-          document.getElementById('scanResult').textContent='Scanner stopped.';
+          html5QrScanner = null;
+          scanning = false;
+          btn.textContent = t.startScanner;
+          scanResult.textContent = t.scannerStopped;
         });
       }
     });
 
-    document.getElementById('enableGps').addEventListener('click',()=>{
-      if(watchId!==null){
+    document.getElementById('enableGps').addEventListener('click', () => {
+      const gpsMessage = document.getElementById('gpsMessage');
+      const lang = languageSelect.value;
+      const t = translations[lang];
+
+      if (watchId !== null) {
         navigator.geolocation.clearWatch(watchId);
-        watchId=null;
-        document.getElementById('gpsMessage').textContent='GPS stopped';
+        watchId = null;
+        gpsMessage.textContent = t.gpsStopped;
         return;
       }
-      if(!navigator.geolocation){
-        alert('GPS not supported on this browser');
+      if (!navigator.geolocation) {
+        alert(t.gpsUnknownError);
         return;
       }
-      watchId=navigator.geolocation.watchPosition((pos)=>{
-        const {latitude,longitude}=pos.coords;
-        document.getElementById('gpsMessage').textContent = `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`;
-      },(err)=>{
+      watchId = navigator.geolocation.watchPosition((pos) => {
+        const { latitude, longitude } = pos.coords;
+        gpsMessage.textContent = `Lat: ${latitude.toFixed(5)}, Lng: ${longitude.toFixed(5)}`;
+      }, (err) => {
         let msg;
-        switch(err.code){
-          case err.PERMISSION_DENIED: msg='Permission denied for GPS access'; break;
-          case err.POSITION_UNAVAILABLE: msg='Position unavailable'; break;
-          case err.TIMEOUT: msg='GPS request timed out'; break;
-          default: msg='Unknown GPS error';
+        switch (err.code) {
+          case err.PERMISSION_DENIED: msg = t.gpsPermissionDenied; break;
+          case err.POSITION_UNAVAILABLE: msg = t.gpsPositionUnavailable; break;
+          case err.TIMEOUT: msg = t.gpsTimeout; break;
+          default: msg = t.gpsUnknownError;
         }
-        document.getElementById('gpsMessage').textContent='GPS error: '+msg;
-      },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+        gpsMessage.textContent = t.gpsUnknownError + msg;
+      }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
     });
 
-    document.getElementById('sendFeedback').addEventListener('click',()=>{
-      const txt=document.getElementById('feedbackText').value.trim();
-      if(!txt){document.getElementById('feedbackStatus').textContent='Enter feedback';return}
-      document.getElementById('feedbackStatus').textContent='Feedback saved locally (demo).';
-      document.getElementById('feedbackText').value='';
+    document.getElementById('sendFeedback').addEventListener('click', () => {
+      const feedbackText = document.getElementById('feedbackText');
+      const feedbackStatus = document.getElementById('feedbackStatus');
+      const lang = languageSelect.value;
+      const t = translations[lang];
+      
+      const txt = feedbackText.value.trim();
+      if (!txt) {
+        feedbackStatus.textContent = t.feedbackEnter;
+        return;
+      }
+      feedbackStatus.textContent = t.feedbackSaved;
+      feedbackText.value = '';
     });
 
     function logout() {
       localStorage.clear();
       window.location.href = 'index.html';
+    }
+    
+    function sosalert() {
+      alert("SOS activated");
     }
   </script>
 </body>

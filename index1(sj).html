@@ -142,22 +142,22 @@
 
         /* Headings & Text */
         .raahi-title {
-            font-weight: 900; /* Increased font weight */
-            font-size: 3rem; /* Increased font size for a bolder look */
+            font-weight: 900;
+            font-size: 3rem;
             background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -1px; /* A little tighter spacing for a modern look */
+            letter-spacing: -1px;
         }
         
         .section-title {
             font-weight: 700;
-            font-size: 1.5rem; /* Larger than default h5 */
+            font-size: 1.5rem;
         }
 
         .form-label, .info-label, .fw-semibold {
-            font-weight: 600; /* Bolder than default */
+            font-weight: 600;
         }
 
         .hidden {
@@ -171,7 +171,7 @@
         
         #map {
             width: 100%;
-            height: 300px; /* Adjust height as needed */
+            height: 300px;
             border-radius: var(--border-radius);
         }
 
@@ -193,8 +193,8 @@
         }
 
         .badge {
-            font-size: 0.9em; /* Slightly larger badge text */
-            padding: 0.6em 1em; /* Increased padding */
+            font-size: 0.9em;
+            padding: 0.6em 1em;
             border-radius: 1rem;
         }
 
@@ -309,6 +309,59 @@
         .speech-btn:hover {
             color: var(--primary-color);
         }
+        .time-input-container input[type="time"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: textfield;
+    text-align: center;
+    font-size: 1.25rem;
+    padding: 0.75rem 1.25rem;
+}
+
+.time-input-container input[type="time"]::-webkit-calendar-picker-indicator {
+    background: none;
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;
+}
+.lost-item-card-footer, .feedback-card-footer {
+    padding: 1rem;
+    border-radius: var(--border-radius);
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    transition: var(--transition);
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+}
+
+.lost-item-card-footer.text-success, .feedback-card-footer.text-success {
+    background-color: #d1fae5;
+    border-color: #6ee7b7;
+    color: #047857;
+}
+
+.lost-item-card-footer.text-danger, .feedback-card-footer.text-danger {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #991b1b;
+}
+
+/* Dark mode adjustments */
+[data-bs-theme="dark"] .lost-item-card-footer.text-success, 
+[data-bs-theme="dark"] .feedback-card-footer.text-success {
+    background-color: #064e3b;
+    border-color: #10b981;
+    color: #a7f3d0;
+}
+
+[data-bs-theme="dark"] .lost-item-card-footer.text-danger, 
+[data-bs-theme="dark"] .feedback-card-footer.text-danger {
+    background-color: #7f1d1d;
+    border-color: #ef4444;
+    color: #fecaca;
+}
     </style>
 </head>
 <body class="bg-light">
@@ -321,9 +374,9 @@
             <div class="qr-code-container">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=FakeQRCodeData" alt="Fake QR Code">
             </div>
-            <div class="mb-3"><strong><span id="vaultUserNameLabel">User Name:</span></strong> <span id="vaultUserName">Sanyam Jain</span></div>
-            <div class="mb-3"><strong><span id="vaultEmailLabel">Email:</span></strong> <span id="vaultEmail">sanyam272727@gmail.com</span></div>
-            <div class="mb-3"><strong><span id="vaultBalanceLabel">Vault Balance:</span></strong> <span id="vaultBalance">₹50,000</span></div>
+            <div class="mb-3"><strong><span id="vaultUserNameLabel">User Name:</span></strong> <span id="vaultUserName">rajesh </span></div>
+            <div class="mb-3"><strong><span id="vaultEmailLabel">Email:</span></strong> <span id="vaultEmail">abcd@gmail.com</span></div>
+            <div class="mb-3"><strong><span id="vaultBalanceLabel">Vault Balance:</span></strong> <span id="vaultBalance">₹500</span></div>
             <div class="mb-3"><strong><span id="vaultLastLoginLabel">Last Login:</span></strong> <span id="vaultLastLogin">13 Sept 2025, 06:30 PM</span></div>
             <div class="mb-3"><strong><span id="vaultIdLabel">Vault ID:</span></strong> <span id="vaultId">VAULT-2025-001</span></div>
             <button id="accessVaultBtn" class="btn btn-success w-100">Access Vault</button>
@@ -337,13 +390,14 @@
         <select id="languageSelect" class="form-select w-auto me-2">
             <option value="en">English</option>
             <option value="hi">हिंदी</option>
+            <option value="pa">ਪੰਜਾਬੀ</option>
         </select>
         <button id="theme-toggle" class="theme-toggle me-2">
             <i id="sun-icon" class="bi bi-sun-fill"></i>
             <i id="moon-icon" class="bi bi-moon-fill hidden"></i>
         </button>
         <button onclick="logout()" class="btn btn-outline-danger btn-sm logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</button>
-        <button class="btn btn-outline-danger btn-sm ms-2 sos-btn"><i class="bi bi-exclamation-octagon-fill"></i> SOS</button>
+        <button onclick="sosalert()" class="btn btn-outline-danger btn-sm ms-2 sos-btn"><i class="bi bi-exclamation-octagon-fill"></i> SOS</button>
         <button id="vaultBtn" class="btn btn-primary btn-sm ms-2"><i class="bi bi-safe me-1"></i> Vault</button>
     </div>
 
@@ -360,7 +414,7 @@
                     <input type="text" id="to" class="form-control form-control-lg" placeholder="To"/>
                     <button class="speech-btn" id="to-speech-btn"><i class="bi bi-mic-fill"></i></button>
                 </div>
-                <div class="mb-3">
+                <div class="mb-3 time-input-container">
                     <input type="time" id="time" class="form-control form-control-lg"/>
                 </div>
                 <div class="d-grid">
@@ -372,13 +426,13 @@
         <div id="bus-list" class="list-group hidden">
             <h5 id="availableBusesTitle" class="mb-3 fw-semibold text-center text-secondary">Available Buses</h5>
             <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 1', 'Dewas', 'Sehore')">
-                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 1</span> <span class="badge float-end">Near Stop X</span>
+                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge float-end">Near Stop X</span>
             </button>
             <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 2', 'Maksi', 'Bhopal')">
-                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 2</span> <span class="badge float-end">Near Stop Y</span>
+                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge float-end">Near Stop Y</span>
             </button>
             <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 3', 'Sehore', 'Indore')">
-                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 3</span> <span class="badge float-end">Near Stop Z</span>
+                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge float-end">Near Stop Z</span>
             </button>
         </div>
         
@@ -397,8 +451,19 @@
             <div class="d-grid">
                 <button id="sendLostItemReport" class="btn btn-warning btn-lg">Send Report to Municipal</button>
             </div>
-            <p id="lostItemStatus" class="mt-2 text-center"></p>
+            <p id="lostItemStatus" class="mt-2 text-center lost-item-card-footer"></p>
         </div>
+        <div class="card shadow-lg p-4 mt-5">
+            <h5 id="feedbackTitle" class="fw-bold mb-3 text-primary">Feedback</h5>
+            <div class="mb-3">
+                <textarea id="feedbackDescription" class="form-control" rows="4" placeholder="Any suggestion and Feedback"></textarea>
+            </div>
+            <div class="d-grid">
+                <button id="sendFeedbackButton" class="btn btn-warning btn-lg">Send Feedback to Municipal</button>
+            </div>
+            <p id="feedbackStatus" class="mt-2 text-center feedback-card-footer"></p>
+        </div>
+        
     </div>
 
     <div id="bus-detail-page" class="container-fluid hidden bg-white vh-100 py-4">
@@ -470,7 +535,7 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
                             <h5 id="getInTitle" class="fw-semibold">Get-In Stop</h5>
-                            <p id="track-to-get-in" class="text-muted small"></p>
+                            <!-- <p id="track-to-get-in" class="text-muted small"></p> -->
                             <button class="btn btn-primary btn-sm" onclick="trackToStop()"><i class="bi bi-geo-alt"></i> Track Me to Stop</button>
                         </div>
                     </div>
@@ -479,8 +544,8 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-body text-center">
                             <h5 id="getOutTitle" class="fw-semibold">Get-Out Stop</h5>
-                            <p id="get-out-stop" class="fw-bold text-success"></p>
-                            <p id="track-to-destination" class="text-muted small"></p>
+                            <!-- <p id="get-out-stop" class="fw-bold text-success"></p> -->
+                            <!-- <p id="track-to-destination" class="text-muted small"></p> -->
                             <button class="btn btn-success btn-sm" onclick="trackToDestination()"><i class="bi bi-geo-alt-fill"></i> Track Me to Destination</button>
                         </div>
                     </div>
@@ -537,7 +602,11 @@
                 lostItemTitle: "Report a Lost Item",
                 lostItemPlaceholder: "Describe the lost item and where/when you lost it.",
                 sendReport: "Send Report to Municipal",
-                reportSuccess: "Report sent successfully! The municipal authority will be notified."
+                reportSuccess: "Report sent successfully! The municipal authority will be notified.",
+                feedbackTitle: "Feedback",
+                feedbackPlaceholder: "Any suggestion and Feedback",
+                sendFeedback: "Send Feedback to Municipal",
+                feedbackSuccess: "Thank you for your feedback! It has been sent successfully."
             },
             hi: {
                 raahiTitle: "राही",
@@ -582,7 +651,60 @@
                 lostItemTitle: "खोई हुई वस्तु की रिपोर्ट करें",
                 lostItemPlaceholder: "खोई हुई वस्तु का विवरण और आपने उसे कहाँ/कब खोया था, बताएं।",
                 sendReport: "नगर निगम को रिपोर्ट भेजें",
-                reportSuccess: "रिपोर्ट सफलतापूर्वक भेजी गई! नगर निगम को सूचित किया जाएगा।"
+                reportSuccess: "रिपोर्ट सफलतापूर्वक भेजी गई! नगर निगम को सूचित किया जाएगा।",
+                feedbackTitle: "प्रतिक्रिया",
+                feedbackPlaceholder: "कोई सुझाव और प्रतिक्रिया",
+                sendFeedback: "नगर निगम को प्रतिक्रिया भेजें",
+                feedbackSuccess: "आपकी प्रतिक्रिया के लिए धन्यवाद! यह सफलतापूर्वक भेज दी गई है।"
+            },
+            pa: {
+                raahiTitle: "ਰਾਹੀ",
+                pageTitle: "ਬੱਸ ਟਰੈਕਰ",
+                fromPlaceholder: "ਕਿੱਥੋਂ",
+                toPlaceholder: "ਕਿੱਥੇ ਤੱਕ",
+                timePlaceholder: "ਸਮਾਂ",
+                search: "ਖੋਜੋ",
+                availableBuses: "ਉਪਲਬਧ ਬੱਸਾਂ",
+                lowBandwidth: "ਘੱਟ ਬੈਂਡਵਿਡਥ",
+                highBandwidth: "ਉੱਚ ਬੈਂਡਵਿਡਥ",
+                lowBandwidthTitle: "ਬੱਸ ਰੂਟ (ਘੱਟ ਬੈਂਡਵਿਡਥ)",
+                highBandwidthTitle: "ਬੱਸ ਰੂਟ (ਉੱਚ ਬੈਂਡਵਿਡਥ)",
+                stopDetailsTitle: "ਸਟਾਪ ਵੇਰਵੇ",
+                smsButton: "ਜਦੋਂ ਬੱਸ ਪਹੁੰਚੇ ਤਾਂ ਮੈਨੂੰ SMS ਕਰੋ",
+                getInTitle: "ਚੜ੍ਹਨ ਦਾ ਸਟਾਪ",
+                getOutTitle: "ਉਤਰਨ ਦਾ ਸਟਾਪ",
+                trackToStop: "ਸਟਾਪ ਤੱਕ ਟ੍ਰੈਕ ਕਰੋ",
+                trackToDestination: "ਮੰਜ਼ਿਲ ਤੱਕ ਟ੍ਰੈਕ ਕਰੋ",
+                busCardTitle: "ਬੱਸ ਵੇਰਵੇ",
+                busIdLabel: "ਬੱਸ ID:",
+                busDriverLabel: "ਡਰਾਈਵਰ:",
+                busSpeedLabel: "ਗਤੀ:",
+                logout: "ਲੌਗਆਉਟ",
+                sos: "SOS",
+                vaultTitle: "ਵਾਲਟ ਜਾਣਕਾਰੀ",
+                userName: "ਉਪਭੋਗਤਾ ਦਾ ਨਾਮ:",
+                email: "ਈਮੇਲ:",
+                vaultBalance: "ਵਾਲਟ ਬੈਲੰਸ:",
+                lastLogin: "ਆਖਰੀ ਲੌਗਇਨ:",
+                vaultId: "ਵਾਲਟ ID:",
+                accessVault: "ਵਾਲਟ ਤੱਕ ਪਹੁੰਚ ਕਰੋ",
+                secureText: "ਸੁਰੱਖਿਅਤ ਅਤੇ ਐਨਕ੍ਰਿਪਟਡ 🔒",
+                vaultBtn: "ਵਾਲਟ",
+                saveRouteBtn: "ਰੂਟ ਸੁਰੱਖਿਅਤ ਕਰੋ",
+                savedRoutesTitle: "ਮੇਰੇ ਸੁਰੱਖਿਅਤ ਕੀਤੇ ਰੂਟ",
+                noRoutesMessage: "ਅਜੇ ਕੋਈ ਰੂਟ ਸੁਰੱਖਿਅਤ ਨਹੀਂ ਕੀਤਾ ਗਿਆ। ਇੱਕ ਰੂਟ ਖੋਜੋ ਅਤੇ ਇਸਨੂੰ ਇੱਥੇ ਸ਼ਾਮਲ ਕਰਨ ਲਈ ਸੁਰੱਖਿਅਤ ਕਰੋ।",
+                editRoute: "ਸੰਪਾਦਿਤ ਕਰੋ",
+                deleteRoute: "ਮਿਟਾਓ",
+                updateRoute: "ਅੱਪਡੇਟ ਕਰੋ",
+                cancelUpdate: "ਰੱਦ ਕਰੋ",
+                lostItemTitle: "ਗੁੰਮੀ ਹੋਈ ਵਸਤੂ ਦੀ ਰਿਪੋਰਟ ਕਰੋ",
+                lostItemPlaceholder: "ਗੁੰਮੀ ਹੋਈ ਵਸਤੂ ਦਾ ਵੇਰਵਾ ਅਤੇ ਤੁਸੀਂ ਇਸਨੂੰ ਕਿੱਥੇ/ਕਦੋਂ ਗੁਆਇਆ ਸੀ, ਦੱਸੋ।",
+                sendReport: "ਮਿਉਂਸਪਲ ਨੂੰ ਰਿਪੋਰਟ ਭੇਜੋ",
+                reportSuccess: "ਰਿਪੋਰਟ ਸਫਲਤਾਪੂਰਵਕ ਭੇਜੀ ਗਈ! ਮਿਉਂਸਪਲ ਅਥਾਰਟੀ ਨੂੰ ਸੂਚਿਤ ਕੀਤਾ ਜਾਵੇਗਾ।",
+                feedbackTitle: "ਫੀਡਬੈਕ",
+                feedbackPlaceholder: "ਕੋਈ ਸੁਝਾਅ ਅਤੇ ਫੀਡਬੈਕ",
+                sendFeedback: "ਮਿਉਂਸਪਲ ਨੂੰ ਫੀਡਬੈਕ ਭੇਜੋ",
+                feedbackSuccess: "ਤੁਹਾਡੇ ਫੀਡਬੈਕ ਲਈ ਧੰਨਵਾਦ! ਇਹ ਸਫਲਤਾਪੂਰਵਕ ਭੇਜ ਦਿੱਤੀ ਗਈ ਹੈ।"
             }
         };
         
@@ -619,23 +741,23 @@
 
         // Mapbox specific variables
         let mapInitialized = false;
+        let map; // Declared globally now
 
         function initMap() {
             if (!mapInitialized) {
-                // ADD YOUR MAPBOX ACCESS TOKEN HERE
-                mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';
+                // IMPORTANT: Replace 'YOUR_MAPBOX_ACCESS_TOKEN' with your actual token
+                mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN'; 
                 
-                const map = new mapboxgl.Map({
-                    container: 'map', // container ID
-                    style: 'mapbox://styles/mapbox/streets-v12', // style URL
-                    center: [77.4126, 23.2599], // starting position [lng, lat] (Bhopal)
-                    zoom: 12 // starting zoom
+                map = new mapboxgl.Map({
+                    container: 'map',
+                    style: 'mapbox://styles/mapbox/streets-v12',
+                    center: [77.4126, 23.2599],
+                    zoom: 12
                 });
 
-                // Add a marker for the current bus location
                 const el = document.createElement('div');
                 el.className = 'bus-marker';
-                el.innerHTML = '<i class="bi bi-bus-front-fill text-primary fs-3"></i>'; // Bootstrap icon as marker
+                el.innerHTML = '<i class="bi bi-bus-front-fill text-primary fs-3"></i>';
                 new mapboxgl.Marker(el)
                     .setLngLat([77.42, 23.26])
                     .addTo(map);
@@ -662,7 +784,6 @@
             const lang = document.getElementById('languageSelect').value;
             const savedRoutes = JSON.parse(localStorage.getItem('savedRoutes')) || [];
             
-            // Get data from main search form
             const from = document.getElementById('from').value.trim();
             const to = document.getElementById('to').value.trim();
             const time = document.getElementById('time').value.trim();
@@ -695,7 +816,7 @@
 
             if (savedRoutes.length > 0) {
                 vaultContainer.classList.remove('hidden');
-                vaultList.innerHTML = ''; // Clear existing list
+                vaultList.innerHTML = '';
                 savedRoutes.forEach((route, index) => {
                     const routeItem = document.createElement('div');
                     routeItem.className = 'list-group-item list-group-item-action d-flex flex-column align-items-start mb-2';
@@ -758,18 +879,11 @@
         function applyLanguage(lang) {
             const t = translations[lang];
             
-            // Correctly update RAAHI title
             const raahiTitleElement = document.getElementById('raahi-title');
             if (raahiTitleElement) {
                  raahiTitleElement.textContent = t.raahiTitle;
             }
 
-            // Main page elements
-            const pageTitleElement = document.getElementById('page-title');
-            if (pageTitleElement) {
-                pageTitleElement.innerHTML = `<i class="bi bi-bus-front-fill"></i> ${t.pageTitle}`;
-            }
-            
             const fromInput = document.getElementById('from');
             if (fromInput) fromInput.placeholder = t.fromPlaceholder;
             
@@ -787,7 +901,6 @@
                 availableBusesTitle.textContent = t.availableBuses;
             }
 
-            // Bus Details Page (elements may not exist on load)
             const lowBandwidthBtn = document.getElementById('lowBandwidthBtn');
             if (lowBandwidthBtn) lowBandwidthBtn.innerHTML = `<i class="bi bi-signal"></i> ${t.lowBandwidth}`;
             
@@ -833,7 +946,6 @@
             const saveRouteBtn = document.getElementById('saveRouteBtn');
             if (saveRouteBtn) saveRouteBtn.innerHTML = `<i class="bi bi-bookmark-fill me-1"></i> ${t.saveRouteBtn}`;
             
-            // Saved Routes Section
             const vaultTitle = document.getElementById('vaultTitle');
             if (vaultTitle) vaultTitle.textContent = t.savedRoutesTitle;
             
@@ -842,12 +954,10 @@
                 noRoutesMessage.textContent = t.noRoutesMessage;
             }
             
-            // Header Buttons
             document.querySelector('.logout-btn').innerHTML = `<i class="bi bi-box-arrow-right"></i> ${t.logout}`;
             document.querySelector('.sos-btn').innerHTML = `<i class="bi bi-exclamation-octagon-fill"></i> ${t.sos}`;
             document.getElementById('vaultBtn').innerHTML = `<i class="bi bi-safe me-1"></i> ${t.vaultBtn}`;
 
-            // Vault Card Text
             document.getElementById('vaultInfoTitle').textContent = t.vaultTitle;
             document.getElementById('vaultUserNameLabel').textContent = t.userName;
             document.getElementById('vaultEmailLabel').textContent = t.email;
@@ -857,7 +967,6 @@
             document.getElementById('accessVaultBtn').textContent = t.accessVault;
             document.getElementById('vaultSecureText').textContent = t.secureText;
 
-            // Lost Item section
             const lostItemTitle = document.getElementById('lostItemTitle');
             if(lostItemTitle) lostItemTitle.textContent = t.lostItemTitle;
 
@@ -867,7 +976,15 @@
             const sendLostItemReport = document.getElementById('sendLostItemReport');
             if(sendLostItemReport) sendLostItemReport.textContent = t.sendReport;
             
-            // Call this to update dynamically generated list content
+            const feedbackTitle = document.getElementById('feedbackTitle');
+            if(feedbackTitle) feedbackTitle.textContent = t.feedbackTitle;
+
+            const feedbackDescription = document.getElementById('feedbackDescription');
+            if(feedbackDescription) feedbackDescription.placeholder = t.feedbackPlaceholder;
+            
+            const sendFeedbackButton = document.getElementById('sendFeedbackButton');
+            if(sendFeedbackButton) sendFeedbackButton.textContent = t.sendFeedback;
+            
             renderUserVault(); 
         }
 
@@ -878,12 +995,12 @@
             renderUserVault();
 
             const role = localStorage.getItem('loggedInRole');
-            const username = localStorage.getItem('loggedInUser');
             if (role !== 'user') {
                 alert('Please login as User');
                 window.location.href = 'index.html';
             }
         });
+
         document.getElementById('languageSelect').addEventListener('change', (event) => {
             const selectedLang = event.target.value;
             localStorage.setItem('lang', selectedLang);
@@ -914,7 +1031,7 @@
             if (busIdValue) busIdValue.textContent = name;
             
             const busDriverValue = document.getElementById('busDriverValue');
-            if (busDriverValue) busDriverValue.textContent = "John Doe";
+            if (busDriverValue) busDriverValue.textContent = "DriverName";
             
             const busSpeedValue = document.getElementById('busSpeedValue');
             if (busSpeedValue) busSpeedValue.textContent = "55 mph";
@@ -953,11 +1070,20 @@
             if (lowBandwidth) lowBandwidth.classList.add('hidden');
             if (highBandwidth) highBandwidth.classList.add('hidden');
 
-            if(type === 'low') {
+            if (type === 'low') {
                 if (lowBandwidth) lowBandwidth.classList.remove('hidden');
             } else {
-                if (highBandwidth) highBandwidth.classList.remove('hidden');
-                initMap();
+                if (highBandwidth) {
+                    highBandwidth.classList.remove('hidden');
+                    if (!mapInitialized) {
+                        initMap();
+                    }
+                    setTimeout(() => {
+                        if (map) {
+                            map.resize();
+                        }
+                    }, 100);
+                }
             }
 
             const lang = document.getElementById('languageSelect').value;
@@ -977,11 +1103,15 @@
         }
 
         function trackToStop() {
-            alert("Tracking from current location to " + getInStop + "...");
+            alert("Tracking from current location to " + "stop" + "...");
         }
 
+        function sosalert(){
+            alert("SoS activated");
+        }
+        
         function trackToDestination() {
-            alert("Tracking from " + getOutStop + " to your final destination...");
+            alert("Tracking from " + "this stop" + " to your final destination...");
         }
 
         function smsWhenArrives() {
@@ -1034,13 +1164,13 @@
             toSpeechBtn.classList.add('hidden');
         }
 
-        // New Lost Item Report Feature
+        // Lost Item Report Feature
         document.getElementById('sendLostItemReport').addEventListener('click', () => {
             const lang = document.getElementById('languageSelect').value;
             const lostItemDescription = document.getElementById('lostItemDescription').value.trim();
             const lostItemStatus = document.getElementById('lostItemStatus');
             
-            lostItemStatus.textContent = ''; // Clear previous status messages
+            lostItemStatus.textContent = '';
 
             if (lostItemDescription === '') {
                 lostItemStatus.textContent = translations[lang].lostItemPlaceholder;
@@ -1059,21 +1189,54 @@
                 timestamp: timestamp
             };
             
-            // Simulate sending to municipal by saving to localStorage
             const municipalReports = JSON.parse(localStorage.getItem('municipalReports')) || [];
             municipalReports.push(newReport);
             localStorage.setItem('municipalReports', JSON.stringify(municipalReports));
 
-            // Display success message
             const t = translations[lang];
             lostItemStatus.textContent = t.reportSuccess;
             lostItemStatus.classList.remove('text-danger');
             lostItemStatus.classList.add('text-success');
 
-            // Clear the form
             document.getElementById('lostItemDescription').value = '';
         });
+        
+        // Feedback Feature
+        document.getElementById('sendFeedbackButton').addEventListener('click', () => {
+            const lang = document.getElementById('languageSelect').value;
+            const feedbackDescription = document.getElementById('feedbackDescription').value.trim();
+            const feedbackStatus = document.getElementById('feedbackStatus');
+            
+            feedbackStatus.textContent = '';
 
+            if (feedbackDescription === '') {
+                feedbackStatus.textContent = translations[lang].feedbackPlaceholder;
+                feedbackStatus.classList.add('text-danger');
+                feedbackStatus.classList.remove('text-success');
+                return;
+            }
+
+            const userName = localStorage.getItem('loggedInUser') || 'User';
+            const timestamp = new Date().toLocaleString();
+
+            const newFeedback = {
+                reporter: userName,
+                type: 'Feedback',
+                description: feedbackDescription,
+                timestamp: timestamp
+            };
+            
+            const municipalReports = JSON.parse(localStorage.getItem('municipalReports')) || [];
+            municipalReports.push(newFeedback);
+            localStorage.setItem('municipalReports', JSON.stringify(municipalReports));
+
+            const t = translations[lang];
+            feedbackStatus.textContent = t.feedbackSuccess;
+            feedbackStatus.classList.remove('text-danger');
+            feedbackStatus.classList.add('text-success');
+
+            document.getElementById('feedbackDescription').value = '';
+        });
     </script>
 </body>
 </html>

@@ -234,6 +234,7 @@
                 <select id="languageSelect" class="form-select form-select-sm w-auto">
                     <option value="en">English</option>
                     <option value="hi">हिंदी</option>
+                    <option value="pa">ਪੰਜਾਬੀ</option>
                 </select>
 
                 <button id="theme-toggle" class="btn btn-light rounded-circle p-2 shadow-sm" style="width: 48px; height: 48px;">
@@ -256,11 +257,8 @@
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" />
                     </svg>
-                    Logout
+                    <span id="logoutBtn">Logout</span>
                 </button>
-        <button class="btn btn-outline-danger btn-sm"><i class="bi bi-box-arrow-right"></i> SOS</button>
-
-
             </div>
         </div>
     </header>
@@ -271,7 +269,7 @@
                 <h2 id="fleetMonitoringTitle" class="card-title-custom">Fleet Monitoring</h2>
                 
                 <div id="map" class="mb-4 text-center">
-                    <img  alt="Fleet tracking map with buses" width="100%" style="max-width: 1600px;height:270px">
+                    <img alt="Fleet tracking map with buses" width="100%" style="max-width: 1600px;height:270px">
                 </div>
                 
                 <div class="bus-info d-grid gap-3">
@@ -281,7 +279,7 @@
                     </div>
                     <div class="info-item p-3 d-flex justify-content-between align-items-center bg-light rounded">
                         <span id="driverLabel" class="info-label fw-medium text-secondary">Driver:</span>
-                        <span class="info-value fw-semibold text-primary">Jane Doe | 45 mph</span>
+                        <span class="info-value fw-semibold text-primary">ramu | 45 mph</span>
                     </div>
                     <div class="info-item p-3 d-flex justify-content-between align-items-center bg-light rounded">
                         <span id="passengerLoadLabel" class="info-label fw-medium text-secondary">Passenger Load:</span>
@@ -297,7 +295,7 @@
                 <p id="driverManagementDesc" class="card-description mb-4">Add or remove drivers from the fleet roster.</p>
                 
                 <div class="mb-3">
-                    <input type="text" id="driverNameInput" class="form-control" placeholder="Driver Name (e.g., John Doe)">
+                    <input type="text" id="driverNameInput" class="form-control" placeholder="Driver Name (e.g., ramu)">
                 </div>
                 <div class="mb-3">
                     <input type="text" id="driverIdInput" class="form-control" placeholder="Driver ID (e.g., D-123)">
@@ -307,7 +305,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                         </svg>
-                        Add New Driver
+                        <span id="addDriverBtnText">Add New Driver</span>
                     </button>
                 </div>
 
@@ -357,12 +355,12 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                             <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
                         </svg>
-                        Add Stop
+                        <span id="addStopBtnText">Add Stop</span>
                     </button>
                 </div>
 
                 <div class="mb-4">
-                    <button id="addRouteBtn" class="btn btn-secondary w-100 py-3">Save New Route</button>
+                    <button id="saveRouteBtn" class="btn btn-secondary w-100 py-3">Save New Route</button>
                 </div>
 
                 <hr class="divider my-4">
@@ -395,15 +393,15 @@
                 <div class="stats-grid d-grid gap-3">
                     <div class="stat-item p-3 d-flex justify-content-between align-items-center">
                         <span id="fleetSizeLabel" class="stat-label fw-medium text-secondary">Total Fleet Size:</span>
-                        <span class="stat-value fw-bold text-primary">250 buses</span>
+                        <span class="stat-value fw-bold text-primary">50 buses</span>
                     </div>
                     <div class="stat-item p-3 d-flex justify-content-between align-items-center">
                         <span id="activeDriversLabel" class="stat-label fw-medium text-secondary">Active Drivers:</span>
-                        <span class="stat-value fw-bold text-primary">187</span>
+                        <span class="stat-value fw-bold text-primary">53</span>
                     </div>
                     <div class="stat-item p-3 d-flex justify-content-between align-items-center">
                         <span id="dailyTripsLabel" class="stat-label fw-medium text-secondary">Daily Trips:</span>
-                        <span class="stat-value fw-bold text-primary">~1,500</span>
+                        <span class="stat-value fw-bold text-primary">~200</span>
                     </div>
                     <div class="stat-item p-3 d-flex justify-content-between align-items-center">
                         <span id="averageLoadLabel" class="stat-label fw-medium text-secondary">Average Load:</span>
@@ -411,7 +409,7 @@
                     </div>
                     <div class="stat-item p-3 d-flex justify-content-between align-items-center">
                         <span id="fuelConsumptionLabel" class="stat-label fw-medium text-secondary">Fuel Consumption:</span>
-                        <span class="stat-value fw-bold text-primary">1,200 gallons</span>
+                        <span class="stat-value fw-bold text-primary">20 kg CNG </span>
                     </div>
                 </div>
             </div>
@@ -453,7 +451,7 @@
                     </div>
                     <div class="stat-item p-3 d-flex justify-content-between align-items-center">
                         <span id="flaggedDriversLabel" class="stat-label fw-medium text-secondary">Flagged Drivers:</span>
-                        <span class="stat-value fw-bold text-danger">Mark Smith (3+ violations)</span>
+                        <span class="stat-value fw-bold text-danger">rajesh (3+ violations)</span>
                     </div>
                 </div>
             </div>
@@ -468,7 +466,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
                             <path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.925a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.896 28.896 0 003.105 2.289z" />
                         </svg>
-                        Send Announcement
+                        <span onclick="alertpopup()" id="sendAnnouncementBtnText">Send Announcement</span>
                     </button>
                 </div>
             </div>
@@ -614,6 +612,64 @@
                 fuelEfficiencyLabel: "ईंधन दक्षता:",
                 eBusRecommendationLabel: "ई-बस की सिफारिश:",
                 greenMetricsDesc: "उच्च घनत्व और कम दूरी की विशेषताओं के कारण ई-बस परिनियोजन के लिए मार्ग 5 की सिफारिश की गई है।"
+            },
+            pa: {
+                panelTitle: "ਨਗਰ ਨਿਗਮ ਪੈਨਲ",
+                welcomeText: "ਜੀ ਆਇਆਂ ਨੂੰ, ਪ੍ਰਬੰਧਕ!",
+                logout: "ਲਾਗਆਉਟ",
+                fleetMonitoringTitle: "ਫਲੀਟ ਨਿਗਰਾਨੀ",
+                busIdLabel: "ਬੱਸ ਆਈ.ਡੀ.:",
+                driverLabel: "ਡਰਾਈਵਰ:",
+                passengerLoadLabel: "ਯਾਤਰੀ ਲੋਡ:",
+                driverManagementTitle: "ਡਰਾਈਵਰ ਪ੍ਰਬੰਧਨ",
+                driverManagementDesc: "ਫਲੀਟ ਰੋਸਟਰ ਵਿੱਚ ਡਰਾਈਵਰਾਂ ਨੂੰ ਜੋੜੋ ਜਾਂ ਹਟਾਓ।",
+                driverNamePlaceholder: "ਡਰਾਈਵਰ ਦਾ ਨਾਮ (ਜਿਵੇਂ ਕਿ, ਜੌਨ ਡੋਅ)",
+                driverIdPlaceholder: "ਡਰਾਈਵਰ ਆਈ.ਡੀ. (ਜਿਵੇਂ ਕਿ, D-123)",
+                addDriverBtn: "ਨਵਾਂ ਡਰਾਈਵਰ ਜੋੜੋ",
+                currentDriversTitle: "ਮੌਜੂਦਾ ਡਰਾਈਵਰ",
+                scheduleManagementTitle: "ਸ਼ਡਿਊਲ ਪ੍ਰਬੰਧਨ",
+                scheduleManagementDesc: "ਟ੍ਰੈਫਿਕ ਵਾਲੇ ਖੇਤਰਾਂ ਲਈ ਏ.ਆਈ.-ਸੰਚਾਲਿਤ ਰੂਟ ਸੁਝਾਅ ਪ੍ਰਾਪਤ ਕਰੋ।",
+                trafficAreaSelectDefault: "ਟ੍ਰੈਫਿਕ ਖੇਤਰ ਚੁਣੋ",
+                trafficAreaOption1: "ਡਾਊਨਟਾਊਨ ਜੰਕਸ਼ਨ",
+                trafficAreaOption2: "ਐਕਸਪ੍ਰੈਸਵੇਅ 9",
+                trafficAreaOption3: "ਸੈਂਟਰਲ ਐਵੇਨਿਊ",
+                suggestRouteBtn: "ਅਨੁਕੂਲ ਰੂਟ ਦਾ ਸੁਝਾਅ ਦਿਓ",
+                addRouteTitle: "ਨਵਾਂ ਰੂਟ ਜੋੜੋ",
+                addRouteDesc: "ਨਾਂ ਅਤੇ ਸਟਾਪਾਂ ਦੀ ਇੱਕ ਲੜੀ ਜੋੜ ਕੇ ਇੱਕ ਨਵਾਂ ਰੂਟ ਪਰਿਭਾਸ਼ਿਤ ਕਰੋ।",
+                routeNamePlaceholder: "ਰੂਟ ਦਾ ਨਾਮ (ਜਿਵੇਂ ਕਿ, ਰੂਟ 10)",
+                stopPlaceholder: "ਸਟਾਪ",
+                addStopBtn: "ਸਟਾਪ ਜੋੜੋ",
+                saveRouteBtn: "ਨਵਾਂ ਰੂਟ ਸੇਵ ਕਰੋ",
+                currentRoutesTitle: "ਮੌਜੂਦਾ ਰੂਟ",
+                generateQRTitle: "ਰੂਟ QR ਕੋਡ ਜਨਰੇਟ ਕਰੋ",
+                generateQRDesc: "ਅਸਾਨੀ ਨਾਲ ਸਾਂਝਾ ਕਰਨ ਲਈ QR ਕੋਡ ਜਨਰੇਟ ਕਰਨ ਲਈ ਇੱਕ ਰੂਟ ਚੁਣੋ।",
+                routeSelectDefault: "ਇੱਕ ਰੂਟ ਚੁਣੋ",
+                generateQRBtn: "QR ਕੋਡ ਜਨਰੇਟ ਕਰੋ",
+                routeQRMessage: "ਇੱਕ ਰੂਟ ਚੁਣੋ ਅਤੇ 'ਜਨਰੇਟ' 'ਤੇ ਕਲਿੱਕ ਕਰੋ।",
+                analyticsTitle: "ਵਿਸ਼ਲੇਸ਼ਣ ਡੈਸ਼ਬੋਰਡ",
+                fleetSizeLabel: "ਕੁੱਲ ਫਲੀਟ ਆਕਾਰ:",
+                activeDriversLabel: "ਐਕਟਿਵ ਡਰਾਈਵਰ:",
+                dailyTripsLabel: "ਰੋਜ਼ਾਨਾ ਯਾਤਰਾਵਾਂ:",
+                averageLoadLabel: "ਔਸਤ ਲੋਡ:",
+                fuelConsumptionLabel: "ਈਂਧਨ ਦੀ ਖਪਤ:",
+                alertsTitle: "ਚਿਤਾਵਨੀਆਂ ਅਤੇ ਰਿਪੋਰਟਾਂ",
+                maintenanceTitle: "ਸਾਂਭ-ਸੰਭਾਲ ਦੀਆਂ ਚਿਤਾਵਨੀਆਂ",
+                busAlertText: "ਬੱਸ B-125: 2 ਦਿਨਾਂ ਵਿੱਚ ਤੇਲ ਬਦਲਣ ਦੀ ਲੋੜ ਹੈ।",
+                incidentTitle: "ਘਟਨਾ ਰਿਪੋਰਟਾਂ",
+                sosAlertText: "ਬੱਸ B-301 ਤੋਂ ਐਸ.ਓ.ਐਸ.: ਡਰਾਈਵਰ ਨੂੰ ਸਹਾਇਤਾ ਦੀ ਲੋੜ ਹੈ।",
+                violationTitle: "ਉਲੰਘਣਾ ਨਿਗਰਾਨੀ",
+                overspeedingLabel: "ਤੇਜ਼ ਰਫ਼ਤਾਰ:",
+                harshBrakingLabel: "ਜ਼ੋਰਦਾਰ ਬ੍ਰੇਕ ਲਗਾਉਣਾ:",
+                routeDeviationLabel: "ਰੂਟ ਦਾ ਭਟਕਾਅ:",
+                flaggedDriversLabel: "ਫਲੈਗ ਕੀਤੇ ਡਰਾਈਵਰ:",
+                communicationTitle: "ਸੰਚਾਰ ਕੇਂਦਰ",
+                announcementPlaceholder: "ਸਾਰੇ ਡਰਾਈਵਰਾਂ ਜਾਂ ਯਾਤਰੀਆਂ ਨੂੰ ਇੱਕ ਸੰਦੇਸ਼ ਭੇਜੋ...",
+                sendAnnouncementBtn: "ਘੋਸ਼ਣਾ ਭੇਜੋ",
+                greenMetricsTitle: "ਗਰੀਨ ਮੈਟ੍ਰਿਕਸ",
+                co2SavingsLabel: "CO₂ ਬੱਚਤ:",
+                fuelEfficiencyLabel: "ਈਂਧਨ ਕੁਸ਼ਲਤਾ:",
+                eBusRecommendationLabel: "ਈ-ਬੱਸ ਦੀ ਸਿਫ਼ਾਰਿਸ਼:",
+                greenMetricsDesc: "ਉੱਚ ਘਣਤਾ ਅਤੇ ਘੱਟ ਦੂਰੀ ਦੀਆਂ ਵਿਸ਼ੇਸ਼ਤਾਵਾਂ ਦੇ ਕਾਰਨ ਈ-ਬੱਸ ਤੈਨਾਤੀ ਲਈ ਰੂਟ 5 ਦੀ ਸਿਫ਼ਾਰਿਸ਼ ਕੀਤੀ ਗਈ ਹੈ।"
             }
         };
 
@@ -623,13 +679,7 @@
             // Header
             document.getElementById('panelTitle').textContent = t.panelTitle;
             document.getElementById('welcomeText').textContent = t.welcomeText;
-            const logoutBtn = document.querySelector('.logout-btn');
-            if (logoutBtn) {
-                const textNode = Array.from(logoutBtn.childNodes).find(node => node.nodeType === 3);
-                if (textNode) {
-                    textNode.nodeValue = ` ${t.logout}`;
-                }
-            }
+            document.getElementById('logoutBtn').textContent = t.logout;
             
             // Fleet Monitoring
             document.getElementById('fleetMonitoringTitle').textContent = t.fleetMonitoringTitle;
@@ -640,9 +690,7 @@
             // Driver Management
             document.getElementById('driverManagementTitle').textContent = t.driverManagementTitle;
             document.getElementById('driverManagementDesc').textContent = t.driverManagementDesc;
-            document.getElementById('driverNameInput').placeholder = t.driverNamePlaceholder;
-            document.getElementById('driverIdInput').placeholder = t.driverIdPlaceholder;
-            document.getElementById('addDriverBtn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg> ${t.addDriverBtn}`;
+            document.getElementById('addDriverBtnText').textContent = t.addDriverBtn;
             document.getElementById('currentDriversTitle').textContent = t.currentDriversTitle;
 
             // Schedule Management
@@ -655,15 +703,8 @@
             document.getElementById('suggestRouteBtn').textContent = t.suggestRouteBtn;
             document.getElementById('addRouteTitle').textContent = t.addRouteTitle;
             document.getElementById('addRouteDesc').textContent = t.addRouteDesc;
-            document.getElementById('routeNameInput').placeholder = t.routeNamePlaceholder;
-            
-            // Stops
-            const stopInputs = document.querySelectorAll('.stop-input');
-            stopInputs.forEach((input, index) => {
-                input.placeholder = `${t.stopPlaceholder} ${index + 1}`;
-            });
-            document.getElementById('addStopBtn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" /></svg> ${t.addStopBtn}`;
-            document.getElementById('addRouteBtn').textContent = t.saveRouteBtn;
+            document.getElementById('addStopBtnText').textContent = t.addStopBtn;
+            document.getElementById('saveRouteBtn').textContent = t.saveRouteBtn;
             document.getElementById('currentRoutesTitle').textContent = t.currentRoutesTitle;
             document.getElementById('generateQRTitle').textContent = t.generateQRTitle;
             document.getElementById('generateQRDesc').textContent = t.generateQRDesc;
@@ -695,8 +736,7 @@
 
             // Communication Hub
             document.getElementById('communicationTitle').textContent = t.communicationTitle;
-            document.getElementById('announcementTextarea').placeholder = t.announcementPlaceholder;
-            document.getElementById('sendAnnouncementBtn').innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor"><path d="M3.105 2.289a.75.75 0 00-.826.95l1.414 4.925A1.5 1.5 0 005.135 9.25h6.115a.75.75 0 010 1.5H5.135a1.5 1.5 0 00-1.442 1.086l-1.414 4.925a.75.75 0 00.826.95 28.896 28.896 0 0015.293-7.154.75.75 0 000-1.115A28.896 28.896 0 003.105 2.289z" /></svg> ${t.sendAnnouncementBtn}`;
+            document.getElementById('sendAnnouncementBtnText').textContent = t.sendAnnouncementBtn;
 
             // Green Metrics
             document.getElementById('greenMetricsTitle').textContent = t.greenMetricsTitle;
@@ -704,6 +744,21 @@
             document.getElementById('fuelEfficiencyLabel').textContent = t.fuelEfficiencyLabel;
             document.getElementById('eBusRecommendationLabel').textContent = t.eBusRecommendationLabel;
             document.getElementById('greenMetricsDesc').textContent = t.greenMetricsDesc;
+        }
+
+        function updatePlaceholderTexts() {
+            const currentLang = document.getElementById('languageSelect').value;
+            const t = translations[currentLang];
+            
+            document.getElementById('driverNameInput').placeholder = t.driverNamePlaceholder;
+            document.getElementById('driverIdInput').placeholder = t.driverIdPlaceholder;
+            document.getElementById('routeNameInput').placeholder = t.routeNamePlaceholder;
+            document.getElementById('announcementTextarea').placeholder = t.announcementPlaceholder;
+            
+            const stopInputs = document.querySelectorAll('.stop-input');
+            stopInputs.forEach((input, index) => {
+                input.placeholder = `${t.stopPlaceholder} ${index + 1}`;
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -717,6 +772,7 @@
             const defaultLang = localStorage.getItem('lang') || 'en';
             languageSelect.value = defaultLang;
             applyLanguage(defaultLang);
+            updatePlaceholderTexts();
             languageSelect.addEventListener('change', (event) => {
                 const selectedLang = event.target.value;
                 localStorage.setItem('lang', selectedLang);
@@ -811,9 +867,9 @@
             const driverList = document.getElementById('driverList');
 
             let drivers = [
-                { id: 'D-123', name: 'John Doe', status: 'Active' },
-                { id: 'D-456', name: 'Jane Smith', status: 'On Route' },
-                { id: 'D-789', name: 'Mike Johnson', status: 'Off Duty' }
+                { id: 'D-123', name: 'Sunil', status: 'Active' },
+                { id: 'D-456', name: 'Sonu', status: 'On Route' },
+                { id: 'D-789', name: 'Rajesh', status: 'Off Duty' }
             ];
 
             function renderDrivers() {
@@ -850,6 +906,8 @@
             addDriverBtn.addEventListener('click', () => {
                 const name = driverNameInput.value.trim();
                 const id = driverIdInput.value.trim();
+                const currentLang = document.getElementById('languageSelect').value;
+                const t = translations[currentLang];
 
                 if (name && id) {
                     if (drivers.some(driver => driver.id === id)) {
@@ -862,17 +920,10 @@
                     driverIdInput.value = '';
                     renderDrivers();
                     
-                    addDriverBtn.textContent = 'Driver Added!';
+                    document.getElementById('addDriverBtnText').textContent = 'Driver Added!';
                     addDriverBtn.classList.add('btn-success');
                     setTimeout(() => {
-                        const currentLang = document.getElementById('languageSelect').value;
-                        const t = translations[currentLang];
-                        addDriverBtn.innerHTML = `
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            ${t.addDriverBtn}
-                        `;
+                        document.getElementById('addDriverBtnText').textContent = t.addDriverBtn;
                         addDriverBtn.classList.remove('btn-success');
                     }, 2000);
                 }
@@ -894,7 +945,7 @@
             // Route Management
             const addStopBtn = document.getElementById('addStopBtn');
             const stopsContainer = document.getElementById('stops-container');
-            const addRouteBtn = document.getElementById('addRouteBtn');
+            const saveRouteBtn = document.getElementById('saveRouteBtn');
             const routeNameInput = document.getElementById('routeNameInput');
             const routesList = document.getElementById('routesList');
             const routeSelect = document.getElementById('routeSelect');
@@ -903,7 +954,7 @@
             const routeQRMessage = document.getElementById('routeQRMessage');
 
             let routes = [
-                { name: 'Route 10', stops: ['Central Station', 'Mall Plaza', 'University Campus', 'Hospital'] },
+                { name: 'Route 10', stops: ['New Hargobind Nagar', 'Mall Plaza', 'University Campus', 'Hospital'] },
                 { name: 'Route 15', stops: ['Airport', 'Downtown', 'Business District'] }
             ];
 
@@ -943,21 +994,6 @@
                     routeSelect.appendChild(option);
                 });
             }
-
-            function updatePlaceholderTexts() {
-                const currentLang = document.getElementById('languageSelect').value;
-                const t = translations[currentLang];
-                
-                document.getElementById('driverNameInput').placeholder = t.driverNamePlaceholder;
-                document.getElementById('driverIdInput').placeholder = t.driverIdPlaceholder;
-                document.getElementById('routeNameInput').placeholder = t.routeNamePlaceholder;
-                document.getElementById('announcementTextarea').placeholder = t.announcementPlaceholder;
-                
-                const stopInputs = document.querySelectorAll('.stop-input');
-                stopInputs.forEach((input, index) => {
-                    input.placeholder = `${t.stopPlaceholder} ${index + 1}`;
-                });
-            }
             
             addStopBtn.addEventListener('click', () => {
                 const stopCount = stopsContainer.querySelectorAll('.stop-input').length + 1;
@@ -977,6 +1013,7 @@
                 `;
                 
                 stopsContainer.appendChild(newStopGroup);
+                updatePlaceholderTexts();
             });
 
             stopsContainer.addEventListener('click', (e) => {
@@ -989,7 +1026,7 @@
                 }
             });
 
-            addRouteBtn.addEventListener('click', () => {
+            saveRouteBtn.addEventListener('click', () => {
                 const routeName = routeNameInput.value.trim();
                 const stops = Array.from(stopsContainer.querySelectorAll('.stop-input'))
                     .map(input => input.value.trim())
@@ -1024,13 +1061,14 @@
                 
                 renderRoutes();
                 renderRouteDropdown();
+                updatePlaceholderTexts();
                 
                 // Show success feedback
-                addRouteBtn.textContent = 'Route Added!';
-                addRouteBtn.classList.add('btn-success');
+                saveRouteBtn.textContent = 'Route Added!';
+                saveRouteBtn.classList.add('btn-success');
                 setTimeout(() => {
-                    addRouteBtn.textContent = t.saveRouteBtn;
-                    addRouteBtn.classList.remove('btn-success');
+                    saveRouteBtn.textContent = t.saveRouteBtn;
+                    saveRouteBtn.classList.remove('btn-success');
                 }, 2000);
             });
 
@@ -1134,6 +1172,9 @@
         function logout() {
             localStorage.clear();
             window.location.href = 'index.html';
+        }
+        function alertpopup() {
+            alert("Anouncement send");
         }
     </script>
 </body>
