@@ -426,7 +426,7 @@
         <div id="bus-list" class="list-group hidden">
             <h5 id="availableBusesTitle" class="mb-3 fw-semibold text-center text-secondary">Available Buses</h5>
             <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 1', 'Dewas', 'Sehore')">
-                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge float-end">Near Stop X</span>
+                <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge float-end">Near Stop X </span>
             </button>
             <button class="list-group-item list-group-item-action py-3 mb-2" onclick="openBusDetails('Bus 2', 'Maksi', 'Bhopal')">
                 <i class="bi bi-bus-front-fill me-2 fs-5 text-primary"></i> <span class="fw-semibold">Bus 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span class="badge float-end">Near Stop Y</span>
@@ -520,6 +520,7 @@
                 </div>
                 <div class="text-center mt-3">
                     <button id="smsButton" class="btn btn-warning" onclick="smsWhenArrives()"><i class="bi bi-chat-dots"></i> SMS Me When Bus Arrives</button>
+                    <button id="smsButton" class="btn btn-warning" onclick="downloadschedule()"><i class="bi bi-chat-dots"></i> Download Schedule</button>
                 </div>
             </div>
 
@@ -1118,6 +1119,9 @@
             alert("You will receive an SMS when the bus arrives at your stop!");
         }
 
+        function downloadschedule(){
+            alert("Schedule is downloaded")
+        }
         function logout() {
             localStorage.clear();
             window.location.href = 'index.html';
